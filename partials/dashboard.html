@@ -1,0 +1,25 @@
+<div>
+	<h1>Dashboard</h1>
+	<div class="row page-header-row">
+		<div class="col-md-4">
+			<a href="#/stories">
+				<p class="lead text-center">My Stories</p>
+				<div class="circle-wrapper center-block text-center">
+					<div class="circle center-block">
+						<span class="count-int">{{tickets.assignedCount}}</span>
+					</div>
+				</div>
+			</a>
+		</div>
+		<div class="col-md-4">
+			<a href="/">
+				<p class="lead text-center">Unassigned</p>
+				<div class="circle-wrapper center-block">
+					<div class="circle center-block text-center">
+						<span class="count-int">{{tickets.unassignedCount}}</span>
+					</div>
+				</div>
+			</a>
+		</div>
+	</div>
+</div>

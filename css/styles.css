@@ -1,0 +1,296 @@
+/*
+ * Sidebar
+ */
+
+/* Hide for mobile, show later */
+.sidebar {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 51px;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    display: block;
+    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+    background-color: #444;
+    /*border-right: 1px solid #eee;*/
+  }
+}
+
+/* Sidebar navigation */
+.nav-sidebar {
+  margin-right: -21px; /* 20px padding + 1px border */
+  margin-bottom: 20px;
+  margin-left: -20px;
+}
+
+
+.nav-sidebar > li > a {
+  padding-right: 20px;
+  padding-left: 20px;
+  border-bottom: 1px solid #333;
+}
+
+.nav-sidebar > .active > a,
+.nav-sidebar > .active > a:hover,
+.nav-sidebar > .active > a:focus {
+  color: #fff;
+  background-color: #428bca;
+}
+
+/* Sidebar navigation */
+.nav-sidebar {
+	margin-right: -21px; /* 20px padding + 1px border */
+	margin-bottom: 20px;
+	margin-left: -20px;
+
+}
+
+.nav-option .fa {
+	display: inline-block;
+	min-width: 20px;
+	margin-right: 15px;
+	font-size: 1.4em;
+}
+
+/*
+ * Main content
+ */
+
+.scroll-top {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  z-index: 1000;
+}
+
+.scroll-top .btn {
+  width: 32px;
+  height: 32px;
+  background: url('/images/1-up.png');
+  background-size: contain;
+}
+
+.main {
+	margin-top: 60px;
+}
+
+.expand {
+	margin-right: .3em;
+	margin-top: 5px;
+}
+
+@media (min-width: 768px) {
+	.main {
+		padding-right: 40px;
+		padding-left: 40px;
+	}
+}
+
+.page-header-row {
+	padding-top: 30px;
+}
+
+.page-header-row .lead {
+	color: #fff;
+}
+
+.page-header-row a:hover {
+	text-decoration:none;
+}
+
+.page-title {
+	/* margin-bottom: 20px; */
+}
+
+.panel-title .lead a:hover {
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.circle-wrapper {
+	width: 140px; /* Set the size of the progress bar */
+	height: 140px;
+}
+
+/* Set the sizes of the elements that make up the progress bar */
+.circle {
+	width: 120px;
+	height: 120px;
+	border: 10px solid #009871;
+	border-radius: 50%;
+}
+
+.count-int {
+	top: 20%;
+	position: relative;
+	font-size: 3em;
+	color: #fff;
+}
+
+.box {
+  padding: 20px;
+  background-color: #444;
+  border: 1px solid #222;
+}
+
+span.big {
+  font-size: 80px;
+}
+
+.ticket-title,
+.ticket-title span {
+  vertical-align: top;
+}
+
+.lead .ticket-tech {
+	margin: 10px 10px 0px 0px;
+}
+
+.fa-chevron-down {
+
+}
+
+.add-ticket-circle {
+	border: 3px solid #fff;
+    padding: 6px 12px;
+    border-radius: 50%;
+    height: 60px;
+    width: 60px;
+}
+
+.ticket-item {
+	background-color: #444;
+	height: 52px;
+	padding: 10px;
+	margin-bottom: 15px;
+}
+
+.ticket-item .fa.pull-right {
+	margin-left: .3em;
+	line-height: 1.5em;
+	margin-right: .3em;
+}
+
+.lead .pull-right.fa.fa-angle-down {
+  margin-top: 7px;
+}
+
+.ticket-item .lead {
+	margin-bottom: 0px;
+}
+.ticket-priority {
+	height: 100%;
+	position: relative;
+	width: 5px;
+	top: -10px;
+	margin-left: -10px;
+	/* z-index: 1000; */
+}
+
+.ticket-priority-1 {
+	background-color: red;
+	height: 100%;
+}
+.ticket-priority-2 {
+	height: 100%;
+	background-color: yellow;
+}
+.ticket-priority-3 {
+	height: 100%;
+	background-color: transparent;
+}
+
+.ticket-chapters .fa {
+	min-width: 20px;
+}
+a:focus {
+	outline: none;
+	text-decoration: none;
+}
+
+a.accordion-toggle,
+a.accordion-toggle:hover {
+	text-decoration:none;
+	color: #fff;
+}
+
+.text-fantasy {
+	font-family: fantasy, cursive;
+}
+
+.ticket-chapters .text-left-indent {
+	margin-left: 40px;
+}
+
+.panel-title .text-success {
+	font-family: monospace;
+}
+
+.btn.ticket-quest-todo {
+	padding: 0px;
+	text-align: left;
+}
+
+.btn-link:focus {
+	outline: none;
+}
+
+.dropdown-menu li:hover {
+	background-color: #009871;
+}
+
+.dropdown-menu {
+	background-color: #444;
+}
+
+.dropdown-menu>li>a {
+	color: #009871;
+}
+
+button.dropdown-toggle {
+	 border: 1px solid transparent;
+	 padding: 10px;
+	 color: #fff;
+}
+
+.page-heading ul.dropdown-menu {
+	margin-top: -20px;
+	margin-left: 10px;
+}
+
+/* 
+ * Light Style 
+ */
+body.light,
+.light .panel-body {
+	color: #676767;
+  	background-color: #ededed;
+}
+
+.light a,
+.light .btn-link {
+	color: #eee;
+}
+
+.light .navbar-inverse,
+.light .panel {
+	background-color: #316DAB;
+}
+
+.light .circle {
+	border-color: #316DAB;
+}
+
+.light .page-header-row .lead,
+.light .count-int,
+.light .panel-body .btn-link {
+	color: #676767;
+}
+

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html ng-app="casticApp">
+<head>
+	<title>Fables</title>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/styles.css">
+	<link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+<body ng-controller="AppCtrl" ng-class="{'light': currentTheme == 'light'}" ng-init="currentTheme = ''">
+
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand text-fantasy" href="#">Fables</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          	<form class="navbar-form navbar-right">
+            	<input type="text" class="form-control" placeholder="Search...">
+          	</form>
+          	<ul class="nav navbar-nav navbar-right">
+				<li><a href="#">Dashboard</a></li>
+				<li><a href="#">Create a Story</a></li>
+				<li><a href="#">Add an Asset</a></li>
+				<li><a href="#">Help</a></li>
+	        </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="container-fluid">
+    	<div class="scroll-top" ng-show="yPos > 0">
+    		<button type="button" class="btn btn-link" ng-click="scrollHome()">
+    			&nbsp;
+    		</button>   		
+    	</div>
+    	<div class="row">
+    		<div class="col-md-2 col-sm-3 sidebar">
+    			<div 
+    				ng-click="currentTheme = (currentTheme == '') ? 'light' : ''" 
+    				class="btn btn-link btn-small">
+    				<span 
+    					class="fa" 
+    					ng-class="{'fa-toggle-on': currentTheme == 'light', 'fa-toggle-off': currentTheme == ''}">
+    				</span>
+    			</div>
+				<ul class="nav nav-sidebar">
+		            <li>
+		            	<a href="#/">
+		            		<div class="nav-option">
+		            			<span class="fa fa-tachometer text-center"></span>
+			            		Dashboard
+		            		</div>
+		            	</a>
+		            </li>
+		            <li>
+		            	<a href="#/stories">
+		            		<div class="nav-option">
+			            		<span class="fa fa-leanpub text-center"></span>&nbsp;
+			            		Stories
+			            	</div>
+		            	</a>
+		            </li>
+		            <li>
+		            	<a href="#">
+		            		<div class="nav-option">
+			            		<span class="fa fa-laptop text-center"></span>&nbsp;
+			            		Assets
+			            	</div>
+		            	</a>
+		            </li>
+		            <li>
+		            	<a href="#">
+		            		<div class="nav-option">
+			            		<span class="fa fa-usd text-center"></span>&nbsp;
+			            		Quotes
+		            		</div>
+		            	</a>
+		           	</li>
+		            <li>
+		            	<a href="#">
+		            		<div class="nav-option">
+			            		<span class="fa fa-users text-center"></span>&nbsp;
+			            		Org Chart
+		            		</div>
+		            	</a>
+		            </li>
+		          </ul>
+			</div>
+			<div class="col-md-10 col-md-offset-2 col-sm-9 col-sm-offset-3 main">
+				<div ng-view>
+					
+				</div>
+			</div>
+    	</div>
+    </div>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-route.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.15/angular-animate.min.js"></script>
+	<script src="app.js"></script>
+	<script src="accordion.js"></script>
+</body>
+</html>

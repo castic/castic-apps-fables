@@ -1,0 +1,63 @@
+<div class="row">
+	<div class="col-md-8">
+		<div class="row">
+			<div class=""></div>
+		</div>
+		<h3 class="text-fantasy">
+			<span>#{{story.storyId}}</span> 
+			{{story.title}} for 
+			<span class="text-warning">{{story.contact}}</span> 
+			in {{story.department}} 
+			<small class="pull-right ticket-tech">by {{story.tech}}</small>
+		</h3>
+		<div class="row"></div>
+		<div class="row">
+			<div class="col-md-12 box">
+				<h4 class="text-fantasy">Quests</h4>
+					<ul class="list-unstyled">
+						<li class="ticket-chapters" ng-repeat="chapter in story.timeline" ng-init="chapter.showContent = false">
+							<p class="">
+								<span ng-hide="chapter.type != 'quest'">
+									<span 
+										ng-hide="chapter.complete == true"
+										class="btn tickets-quest-todo">
+										<span 
+											class="fa"
+											ng-click="chapter.complete = true" 
+											ng-class="{'fa-circle-thin': chapter.complete == false}">
+										</span>
+									</span>
+									<span 
+										class="fa" 
+										ng-hide="chapter.complete == false"
+										ng-class="{'fa-check': chapter.complete == true}">
+									</span>
+								</span>
+								<span 
+									class="fa text-warning"
+									ng-hide="chapter.type == 'quest'"
+									ng-class="{'fa-envelop-o': chapter.type == 'email', 'fa-phone': chapter.type == 'call'}">
+								</span>
+								{{chapter.title}}
+								<button
+									type="button"
+									ng-click="chapter.showContent = !chapter.showContent"
+									class="btn btn-link"
+									ng-show="chapter.content.length > 0">
+									<span class="fa" ng-class="{'fa-angle-up': chapter.showContent, 'fa-angle-down': !chapter.showContent}"></span>
+								</button>
+							</p>
+							<blockquote class="text-left-indent" ng-show="chapter.showContent">{{chapter.content}}</blockquote>
+						</li>
+					</ul>
+			</div>
+			<div class="col-md-6 box">
+				<h4 class="text-fantasy">Related</h4>
+			</div>
+			<div class="col-md-6 box">
+				<h4 class="text-fantasy">Tags</h4>
+			</div>
+		</div>
+		
+	</div>
+</div>
