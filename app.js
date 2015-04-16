@@ -45,7 +45,7 @@ app.controller('AppCtrl', ['$scope', '$interval', function($scope, $interval){
 }]);
 
 app.service('DataService', [function() {
-	var stories = [
+	var storiesOld = [
 		{
 			storyId: 2, 
 			title: 'Install mouse',
@@ -321,6 +321,92 @@ app.service('DataService', [function() {
 		}];
 
 	var techs = [{name: 'Che'},{name: 'Amir'}, {name: 'Chris'}, {name: 'Jeremy'}];
+
+	var stories = {
+		hero: {
+			name: String,
+			email: String,
+			role: {
+				type: String,
+				enum: ['hero', 'champion']
+			},
+			abilities: [{
+				id: Number,
+				title: String,
+				quests: [{
+					id: Number,
+					title: String,
+					estimatedTime: Number,
+					type: String
+				}]
+			}]
+		},
+		champion: {
+			name: String,
+			email: String,
+			role: {
+				type: String,
+				enum: ['hero', 'champion']
+			},
+			abilities: [{
+				id: Number,
+				title: String,
+				quests: [{
+					id: Number,
+					title: String,
+					estimatedTime: Number,
+					type: String
+				}]
+			}]
+		},
+		contact: [{
+			pid: String,
+			name: String,
+			phone: String,
+			unit: {
+				realm: String,
+				land: String
+			},
+			title: String,
+			location: String,
+			email: String,
+			stories: [Number],
+			assets: [Number]
+		}],
+		unit: {
+			realm: String,
+			land: String
+		},
+		timeLine: [{
+			id: Number,
+			type: [{
+				type: String,
+				enum: [String]
+			}],
+			title: String,
+			content: String,
+			createdBy: String,
+			completedBy: String,
+			timeCreated: Date,
+			details: {
+				estimatedTime: Number,
+				timeCompleted: Date,
+				attachment: String,
+			}
+		}],
+		assets: [Number],
+		timeCreated: Date,
+		tag: [{
+			id: Number,
+			title: String,
+			quests: [{
+				id: Number,
+				title: String,
+				estimatedTime: Number,
+				type: String
+			}]
+		}]
+	};
 
 	return {
 		getStories: function () {
