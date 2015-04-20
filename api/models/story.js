@@ -1,7 +1,7 @@
 var mongoose = require('mongoose'), 
 	Schema = mongoose.Schema;
 
-var storySchema = Schema({
+var storySchema = new Schema({
 		storyId: Number,
 		hero: {type: Number, ref: 'Person'},
 		champion: {type: Number, ref: 'Person'},
@@ -9,7 +9,7 @@ var storySchema = Schema({
 		unit: {type: Number, ref: 'Unit'},
 		timeLine: [{
 			id: Number,
-			type: [{
+			entryType: [{
 				type: String,
 				enum: ['Quest', 'Phone', 'Email', 'Face2Face', 'Note']
 			}],
@@ -17,7 +17,7 @@ var storySchema = Schema({
 			content: String,
 			createdBy: {type: Number, ref: 'Person'},
 			completedBy: {type: Number, ref: 'Person'},
-			timeCreated: new Date(),
+			timeCreated: { type: Date, default: Date.now },
 			tags: [String],
 			details: {
 				estimatedTime: Number,
@@ -26,9 +26,7 @@ var storySchema = Schema({
 			}
 		}],
 		assets: [{type: Number, ref: 'Asset'}],
-		timeCreated: new Date()
+		timeCreated: { type: Date, default: Date.now }
 	});
 
-var Story  = mongoose.model('Story', storySchema);
-
-exports.Story = Story;
+exports.Story = mongoose.model('Story', storySchema);

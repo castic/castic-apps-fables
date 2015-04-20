@@ -1,7 +1,7 @@
 var mongoose = require('mongoose'), 
 	Schema = mongoose.Schema;
 
-var personSchema = Schema({
+var personSchema = new Schema({
 		pid: Number,
 		name: String,
 		email: String,
@@ -18,6 +18,4 @@ var personSchema = Schema({
 		assets: [{type: Number, ref: 'Asset'}]
 	});
 
-var Person  = mongoose.model('Person', storySchema);
-
-exports.Person = Person;
+exports.Person  = mongoose.model('Person', personSchema);

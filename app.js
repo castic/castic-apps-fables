@@ -23,6 +23,10 @@ app.config(['$routeProvider', function ($routeProvider) {
             templateUrl: 'partials/newstory.html',
             controller: 'NewCtrl'
         }).
+        when('/admin', {
+            templateUrl: 'partials/admin.html',
+            controller: 'AdminCtrl'
+        }).
         otherwise({
         	redirectTo: '/'
         });
@@ -44,7 +48,19 @@ app.controller('AppCtrl', ['$scope', '$interval', function($scope, $interval){
 
 }]);
 
-app.service('DataService', [function() {
+app.controller('AdminCtrl', ['$scope', 'DataService', function ($scope, DataService) {
+	DataService.Quests.list()
+		.success(function (quests) {
+			$scope.quests = quests;
+		});
+
+	$scope.save = function (quest) {
+		console.log(quest);
+	}
+	
+}]);
+
+app.service('DataService', ['$http', function ($http) {
 	var storiesOld = [
 		{
 			storyId: 2, 
@@ -408,6 +424,8 @@ app.service('DataService', [function() {
 		}]
 	};
 
+	var apiPath = 'http://localhost:8300';
+
 	return {
 		getStories: function () {
 			return stories;
@@ -425,6 +443,11 @@ app.service('DataService', [function() {
 		},
 		getTechs: function () {
 			return techs;
+		},
+		Quests: {
+			list: function () {
+				return $http.get(apiPath+'/quests');
+			}
 		}
 	}
 }]);
@@ -437,6 +460,15 @@ app.controller('StoriesCtrl', ['$scope', 'DataService', function($scope, DataSer
 
 app.controller('StoryCtrl', ['$scope', '$routeParams', 'DataService', function($scope, $routeParams, DataService){
 	$scope.story = DataService.getStory($routeParams.storyId);
+	
+	DataService.Quests.list()
+		.success(function (quests) {
+			console.log(quests);
+		})
+		.error(function (err, status) {
+
+		});
+
 	console.log($scope.story);
 }]);
 

@@ -1,16 +1,14 @@
 var mongoose = require('mongoose'), 
 	Schema = mongoose.Schema;
 
-var questSchema = Schema({
-	_id: Number,
-	title: String,
-	estimatedTime: Number,
-	tag: [String],
-	child: [{type: Number, ref: 'Quest'}]
-});
+var questSchema = new Schema({
+		title: String,
+		estimatedTime: {
+			type: Number,
+			default: 15
+		},
+		tags: [String],
+		children: [{type: Schema.ObjectId, ref: 'Quest'}]
+	});
 
-var Quest  = mongoose.model('Quest', storySchema);
-
-exports.list = function() {
-	return Quest;
-};
+exports.quest =  mongoose.model('Quest', questSchema);
