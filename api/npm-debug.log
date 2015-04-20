@@ -1,0 +1,135 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'install', 'body-parser' ]
+2 info using npm@1.4.28
+3 info using node@v0.10.33
+4 verbose cache add [ 'body-parser', null ]
+5 verbose cache add name=undefined spec="body-parser" args=["body-parser",null]
+6 verbose parsed url { protocol: null,
+6 verbose parsed url   slashes: null,
+6 verbose parsed url   auth: null,
+6 verbose parsed url   host: null,
+6 verbose parsed url   port: null,
+6 verbose parsed url   hostname: null,
+6 verbose parsed url   hash: null,
+6 verbose parsed url   search: null,
+6 verbose parsed url   query: null,
+6 verbose parsed url   pathname: 'body-parser',
+6 verbose parsed url   path: 'body-parser',
+6 verbose parsed url   href: 'body-parser' }
+7 silly lockFile 14cf125c-body-parser body-parser
+8 verbose lock body-parser /Users/che/.npm/14cf125c-body-parser.lock
+9 silly lockFile 14cf125c-body-parser body-parser
+10 silly lockFile 14cf125c-body-parser body-parser
+11 verbose addNamed [ 'body-parser', '' ]
+12 verbose addNamed [ null, '*' ]
+13 silly lockFile 9f665704-body-parser body-parser@
+14 verbose lock body-parser@ /Users/che/.npm/9f665704-body-parser.lock
+15 silly addNameRange { name: 'body-parser', range: '*', hasData: false }
+16 verbose request where is /body-parser
+17 verbose request registry https://registry.npmjs.org/
+18 verbose request id 80ca7e2ef732bb74
+19 verbose url raw /body-parser
+20 verbose url resolving [ 'https://registry.npmjs.org/', './body-parser' ]
+21 verbose url resolved https://registry.npmjs.org/body-parser
+22 verbose request where is https://registry.npmjs.org/body-parser
+23 info trying registry request attempt 1 at 15:00:51
+24 verbose etag "CKN7FVK5BJO3CO91CJ3PTXG0P"
+25 http GET https://registry.npmjs.org/body-parser
+26 http 200 https://registry.npmjs.org/body-parser
+27 silly registry.get cb [ 200,
+27 silly registry.get   { date: 'Mon, 20 Apr 2015 19:00:51 GMT',
+27 silly registry.get     server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+27 silly registry.get     etag: '"4G98EU7AUYVB9BCPCY2CI2RYD"',
+27 silly registry.get     'content-type': 'application/json',
+27 silly registry.get     'cache-control': 'max-age=60',
+27 silly registry.get     'content-length': '95465',
+27 silly registry.get     'accept-ranges': 'bytes',
+27 silly registry.get     via: '1.1 varnish',
+27 silly registry.get     age: '43',
+27 silly registry.get     'x-served-by': 'cache-iad2131-IAD',
+27 silly registry.get     'x-cache': 'HIT',
+27 silly registry.get     'x-cache-hits': '770',
+27 silly registry.get     'x-timer': 'S1429556451.235789,VS0,VE0',
+27 silly registry.get     vary: 'Accept',
+27 silly registry.get     'keep-alive': 'timeout=10, max=50',
+27 silly registry.get     connection: 'Keep-Alive' } ]
+28 silly addNameRange number 2 { name: 'body-parser', range: '*', hasData: true }
+29 silly addNameRange versions [ 'body-parser',
+29 silly addNameRange   [ '1.0.0',
+29 silly addNameRange     '1.0.1',
+29 silly addNameRange     '1.0.2',
+29 silly addNameRange     '1.1.0',
+29 silly addNameRange     '1.1.1',
+29 silly addNameRange     '1.1.2',
+29 silly addNameRange     '1.2.0',
+29 silly addNameRange     '1.2.1',
+29 silly addNameRange     '1.2.2',
+29 silly addNameRange     '1.3.0',
+29 silly addNameRange     '1.3.1',
+29 silly addNameRange     '1.4.0',
+29 silly addNameRange     '1.4.1',
+29 silly addNameRange     '1.4.2',
+29 silly addNameRange     '1.4.3',
+29 silly addNameRange     '1.5.0',
+29 silly addNameRange     '1.5.1',
+29 silly addNameRange     '1.5.2',
+29 silly addNameRange     '1.6.0',
+29 silly addNameRange     '1.6.1',
+29 silly addNameRange     '1.6.2',
+29 silly addNameRange     '1.6.3',
+29 silly addNameRange     '1.6.4',
+29 silly addNameRange     '1.6.5',
+29 silly addNameRange     '1.6.6',
+29 silly addNameRange     '1.6.7',
+29 silly addNameRange     '1.7.0',
+29 silly addNameRange     '1.8.0',
+29 silly addNameRange     '1.8.1',
+29 silly addNameRange     '1.8.2',
+29 silly addNameRange     '1.8.3',
+29 silly addNameRange     '1.8.4',
+29 silly addNameRange     '1.9.0',
+29 silly addNameRange     '1.9.1',
+29 silly addNameRange     '1.9.2',
+29 silly addNameRange     '1.9.3',
+29 silly addNameRange     '1.10.0',
+29 silly addNameRange     '1.10.1',
+29 silly addNameRange     '1.10.2',
+29 silly addNameRange     '1.11.0',
+29 silly addNameRange     '1.12.0',
+29 silly addNameRange     '1.12.1',
+29 silly addNameRange     '1.12.2',
+29 silly addNameRange     '1.12.3' ] ]
+30 verbose addNamed [ 'body-parser', '1.12.3' ]
+31 verbose addNamed [ '1.12.3', '1.12.3' ]
+32 silly lockFile 8155d77e-body-parser-1-12-3 body-parser@1.12.3
+33 verbose lock body-parser@1.12.3 /Users/che/.npm/8155d77e-body-parser-1-12-3.lock
+34 silly lockFile b3fe3611-dy-parser-body-parser-1-12-3-tgz https://registry.npmjs.org/body-parser/-/body-parser-1.12.3.tgz
+35 verbose lock https://registry.npmjs.org/body-parser/-/body-parser-1.12.3.tgz /Users/che/.npm/b3fe3611-dy-parser-body-parser-1-12-3-tgz.lock
+36 verbose addRemoteTarball [ 'https://registry.npmjs.org/body-parser/-/body-parser-1.12.3.tgz',
+36 verbose addRemoteTarball   '5f40bf17e7823be6895d4d35582752e36cf97f71' ]
+37 info retry fetch attempt 1 at 15:00:51
+38 verbose fetch to= /var/folders/f2/r1wr10bs21gc42fv8y4m4bgc0000gp/T/npm-96096-1pmKSRMI/registry.npmjs.org/body-parser/-/body-parser-1.12.3.tgz
+39 http GET https://registry.npmjs.org/body-parser/-/body-parser-1.12.3.tgz
+40 http 200 https://registry.npmjs.org/body-parser/-/body-parser-1.12.3.tgz
+41 silly lockFile b3fe3611-dy-parser-body-parser-1-12-3-tgz https://registry.npmjs.org/body-parser/-/body-parser-1.12.3.tgz
+42 silly lockFile b3fe3611-dy-parser-body-parser-1-12-3-tgz https://registry.npmjs.org/body-parser/-/body-parser-1.12.3.tgz
+43 silly lockFile 8155d77e-body-parser-1-12-3 body-parser@1.12.3
+44 silly lockFile 8155d77e-body-parser-1-12-3 body-parser@1.12.3
+45 silly lockFile 9f665704-body-parser body-parser@
+46 silly lockFile 9f665704-body-parser body-parser@
+47 error Error: EACCES, mkdir '/Users/che/.npm/body-parser/1.12.3'
+47 error  { [Error: EACCES, mkdir '/Users/che/.npm/body-parser/1.12.3']
+47 error   errno: 3,
+47 error   code: 'EACCES',
+47 error   path: '/Users/che/.npm/body-parser/1.12.3' }
+48 error Please try running this command again as root/Administrator.
+49 error System Darwin 14.3.0
+50 error command "node" "/usr/local/bin/npm" "install" "body-parser"
+51 error cwd /Users/che/Desktop/Google Drive/castic-apps-fables/api
+52 error node -v v0.10.33
+53 error npm -v 1.4.28
+54 error path /Users/che/.npm/body-parser/1.12.3
+55 error code EACCES
+56 error errno 3
+57 error stack Error: EACCES, mkdir '/Users/che/.npm/body-parser/1.12.3'
+58 verbose exit [ 3, true ]

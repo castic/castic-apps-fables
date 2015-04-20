@@ -56,7 +56,22 @@ app.controller('AdminCtrl', ['$scope', 'DataService', function ($scope, DataServ
 
 	$scope.save = function (quest) {
 		console.log(quest);
-	}
+
+		DataService.Quests.add(quest)
+			.success(function (quest) {
+				console.log('saved to db ', quest);	
+				$scope.quests.push(quest);
+			});
+	};
+
+	$scope.update = function (quest) {
+		console.log(quest);
+
+		DataService.Quests.update(quest)
+			.success(function (rows) {
+				console.log('updated ' + rows.nModified + ' item(s) in db');	
+			});
+	};
 	
 }]);
 
@@ -447,6 +462,14 @@ app.service('DataService', ['$http', function ($http) {
 		Quests: {
 			list: function () {
 				return $http.get(apiPath+'/quests');
+			},
+			add: function (quest) {
+				console.log(quest);
+				return $http.post(apiPath+'/quests/new', quest);
+			},
+			update: function (quest) {
+				console.log(quest);
+				return $http.put(apiPath+'/quests/update', quest);
 			}
 		}
 	}

@@ -1,6 +1,29 @@
 <div class="row">
 	<div class="col-md-12">
-		<h2>Quests</h2>
+		<h2 ng-init="showNewQuest=false">
+			Quests 
+			<button type="button" class="btn btn-primary" ng-click="showNewQuest=true">
+				<span class="fa fa-plus"></span>
+			</button>
+		</h2>
+		<form class="form-inline" ng-show="showNewQuest">
+			<div class="form-group">
+				<input type="text" class="form-control" ng-model="newQuest.title" placeholder="Title">
+			</div>
+			<div class="form-group">
+				<input type="number" class="form-control" ng-model="newQuest.estimatedTime" placeholder="Estimated Time">
+			</div>
+			<div class="form-group">
+				<input type="text" class="form-control" ng-model="newQuest.tags" placeholder="Tags">
+			</div>
+			<div class="form-group">
+				<label for="questParent"></label>
+				<select ng-option="quest.title for quest in quests" ng-model="newQuest.parent"></select>
+			</div>
+			<button type="button" class="btn btn-default" ng-click="showNewQuest=false; save(newQuest)">Add</button>
+		</form>
+			
+		</div>
 		<table class="table table-hover table-condensed">
 			<thead>
 				<tr>
@@ -31,7 +54,7 @@
 							type="button" 
 							class="btn btn-link" 
 							ng-show="editContent" 
-							ng-click="editContent=false; save(quest)">
+							ng-click="editContent=false; update(quest)">
 							<span class="fa fa-check"></span>
 						</button>
 						<button 
@@ -42,7 +65,7 @@
 							<span class="fa fa-close"></span>
 						</button>
 					</td>
-					<td>{{quest._id}}</td>
+					<td>{{quest.questId}}</td>
 					<td>
 						<span ng-show="!editContent">{{quest.title}}</span>
 						<input 
@@ -85,7 +108,7 @@
 							</button>	
 						</span>
 						<p 
-							ng-repeat="tag in quest.tag" 
+							ng-repeat="tag in quest.tags" 
 							ng-show="!editContent">
 							{{tag}}
 							<button 

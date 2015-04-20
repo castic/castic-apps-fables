@@ -1,12 +1,9 @@
 var mongoose = require('mongoose');
+var autoIncrement = require('mongoose-auto-increment');
+
 var mongodbURL = 'mongodb://localhost/fables';
 var mongodbOptions = { };
 
-mongoose.connect(mongodbURL, mongodbOptions, function (err, res) {
-    if (err) { 
-        console.log('Connection refused to ' + mongodbURL);
-        console.log(err);
-    } else {
-        console.log('Connection successful to: ' + mongodbURL);
-    }
-});
+global.db = mongoose.createConnection(mongodbURL, mongodbOptions);
+
+autoIncrement.initialize(db);

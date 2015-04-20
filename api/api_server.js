@@ -4,22 +4,13 @@ var db = require('./mongodb_config.js'),
 	Person = require('./models/person.js'),
 	Unit = require('./models/unit.js'),
 	express = require('express'),
-	fable = {},
+	// fable = {},
 	fables = require('./routes.js'),
-	api_server = express();
+	api_server = express(),
+	bodyParser = require('body-parser');
 
-fable = {
-	listAllQuests: function	(callBack) {
-		return Quests.find({}, callBack);
-	},
-	listChildQuests: function (questID, callBack) {
-		return Quests.findOne({_id: questID}).populate('children').exec(callBack);
-	}
-}
-
-function errorHandler (res, err) {
-    res.status(500).send({ error: err });
-}
+api_server.use( bodyParser.json() );       						// to support JSON-encoded bodies
+api_server.use( bodyParser.urlencoded({ extended: true }));		// to support URL-encoded bodies
 
 api_server.all('*', function(req, res, next) {
   res.set('Access-Control-Allow-Origin', 'http://localhost:31337');
@@ -33,6 +24,27 @@ api_server.all('*', function(req, res, next) {
 api_server.listen(8300);
 
 api_server.get('/quests', fables.quests);
+api_server.post('/quests/new', fables.addQuest);
+api_server.put('/quests/update', fables.updateQuest);
+
+
+// USE WITH CAUTION
+api_server.get('/quests/remove-all', fables.purgeQuests);
+
+// fable = {
+// 	listAllQuests: function	(callBack) {
+// 		return Quests.find({}, callBack);
+// 	},
+// 	listChildQuests: function (questID, callBack) {
+// 		return Quests.findOne({_id: questID}).populate('children').exec(callBack);
+// 	}
+// }
+
+// function errorHandler (res, err) {
+//     res.status(500).send({ error: err });
+// }
+
+
 
 // api_server.get('/quests', function (req, res) {
 // 	// var newTask = new fable.quests({
@@ -53,46 +65,46 @@ api_server.get('/quests', fables.quests);
 // 	});
 // });
 
-api_server.get('/subquests', function (req, res) {
+// api_server.get('/subquests', function (req, res) {
 	
-	fable.listChildQuests('5531d883c64278244a5562f3', function (err, singleQuest) {
-		if (err) {
-			console.log(err);
-			res.send(err);
-		}
-		res.json(singleQuest.children);
-		console.log(singleQuest.children);
-	});
+// 	fable.listChildQuests('5531d883c64278244a5562f3', function (err, singleQuest) {
+// 		if (err) {
+// 			console.log(err);
+// 			res.send(err);
+// 		}
+// 		res.json(singleQuest.children);
+// 		console.log(singleQuest.children);
+// 	});
 
-});
+// });
 
-api_server.get('/stories', function (req, res) {
-	Story.list().find({}, function (err, stories) {
-		if (err) {
-			console.log(err);
-			res.send(err);
-		}
-		res.json(stories);
-	});
-});
+// api_server.get('/stories', function (req, res) {
+// 	Story.list().find({}, function (err, stories) {
+// 		if (err) {
+// 			console.log(err);
+// 			res.send(err);
+// 		}
+// 		res.json(stories);
+// 	});
+// });
 
-api_server.get('/units', function (req, res) {
-	unit.list().find({}, function (err, units) {
-		if (err) {
-			console.log(err);
-			res.send(err);
-		}
-		res.json(units);
-	});
-});
+// api_server.get('/units', function (req, res) {
+// 	unit.list().find({}, function (err, units) {
+// 		if (err) {
+// 			console.log(err);
+// 			res.send(err);
+// 		}
+// 		res.json(units);
+// 	});
+// });
 
-api_server.get('/people', function (req, res) {
-	Person.list().find({}, function (err, people) {
-		if (err) {
-			console.log(err);
-			res.send(err);
-		}
-		res.json(people);
-	});
-});
+// api_server.get('/people', function (req, res) {
+// 	Person.list().find({}, function (err, people) {
+// 		if (err) {
+// 			console.log(err);
+// 			res.send(err);
+// 		}
+// 		res.json(people);
+// 	});
+// });
 

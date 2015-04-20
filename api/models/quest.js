@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'), 
-	Schema = mongoose.Schema;
+	Schema = mongoose.Schema,
+	autoIncrement = require('mongoose-auto-increment');
 
 var questSchema = new Schema({
 		title: String,
@@ -8,7 +9,9 @@ var questSchema = new Schema({
 			default: 15
 		},
 		tags: [String],
-		children: [{type: Schema.ObjectId, ref: 'Quest'}]
+		children: [{type: Number, ref: 'Quest'}]
 	});
 
-exports.quest =  mongoose.model('Quest', questSchema);
+questSchema.plugin(autoIncrement.plugin, { model: 'Quest', field: 'questId' });
+
+exports.quest =  db.model('Quest', questSchema);
