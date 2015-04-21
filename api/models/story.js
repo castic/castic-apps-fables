@@ -3,6 +3,7 @@ var mongoose = require('mongoose'),
 
 var storySchema = new Schema({
 		storyId: Number,
+		title: String,
 		hero: {type: Number, ref: 'Person'},
 		champion: {type: Number, ref: 'Person'},
 		contacts: [{type: Number, ref: 'Person'}],
