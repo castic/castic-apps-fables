@@ -1,8 +1,8 @@
-var db = require('./mongodb_config.js'),
-	Quests = require('./models/quest.js').quest,
-	Story = require('./models/story.js'),
-	Person = require('./models/person.js'),
-	Unit = require('./models/unit.js'),
+var db_config = require('./mongodb_config.js'),
+	// Quests = require('./models/quest.js').quest,
+	// Story = require('./models/story.js'),
+	// Person = require('./models/person.js'),
+	// Unit = require('./models/unit.js'),
 	express = require('express'),
 	// fable = {},
 	fables = require('./routes.js'),
@@ -29,7 +29,7 @@ api_server.put('/quests/update', fables.updateQuest);
 
 
 // USE WITH CAUTION
-api_server.get('/quests/remove-all', fables.purgeQuests);
+// api_server.get('/quests/remove-all', fables.purgeQuests);
 
 // fable = {
 // 	listAllQuests: function	(callBack) {

@@ -1,8 +1,11 @@
-var db = require('./mongodb_config.js'),
-	Quests = require('./models/quest.js').quest,
+var // db = require('./mongodb_config.js'),
+	// Quests = require('./models/quest.js'),
+	mongoose = require('mongoose'),
 	Story = require('./models/story.js'),
 	Person = require('./models/person.js'),
 	Unit = require('./models/unit.js');
+
+var Quests = db.model('Quest');
 
 exports.quests = function (req, res) {
 	Quests.find({}, function (err, quests) {
