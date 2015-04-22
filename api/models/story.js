@@ -2,7 +2,6 @@ var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
 var storySchema = new Schema({
-		storyId: Number,
 		title: String,
 		hero: {type: Number, ref: 'Person'},
 		champion: {type: Number, ref: 'Person'},
@@ -30,4 +29,4 @@ var storySchema = new Schema({
 		timeCreated: { type: Date, default: Date.now }
 	});
 
-exports.Story = mongoose.model('Story', storySchema);
+exports.docSchema = storySchema;

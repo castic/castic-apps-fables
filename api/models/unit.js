@@ -6,4 +6,4 @@ var unitSchema = new Schema({
 		land: String
 	});
 
-exports.Unit  = mongoose.model('Unit', unitSchema);
+exports.docSchema = unitSchema

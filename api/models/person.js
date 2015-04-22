@@ -18,4 +18,4 @@ var personSchema = new Schema({
 		assets: [{type: Number, ref: 'Asset'}]
 	});
 
-exports.Person  = mongoose.model('Person', personSchema);
+exports.docSchema = personSchema;

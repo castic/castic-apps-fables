@@ -1,13 +1,17 @@
-var // db = require('./mongodb_config.js'),
-	// Quests = require('./models/quest.js'),
-	mongoose = require('mongoose'),
-	Story = require('./models/story.js'),
-	Person = require('./models/person.js'),
-	Unit = require('./models/unit.js');
+var Quests;
 
-var Quests = db.model('Quest');
+exports.setRoute = function (db) {
+	Quests = db.model('Quest');
 
-exports.quests = function (req, res) {
+	return {
+		list: list,
+		addQuest: addQuest,
+		updateQuest: updateQuest,
+		purgeQuests: purgeQuests
+	}
+}
+
+list = function (req, res) {
 	Quests.find({}, function (err, quests) {
 		if (err) {
 			console.log(err);
@@ -21,7 +25,7 @@ exports.quests = function (req, res) {
 	// Quests.find({}).remove().exec();
 };
 
-exports.addQuest = function (req, res) {
+addQuest = function (req, res) {
 	if (req.body.title.length > 0) {
 		var newTask = new Quests({
 			title: req.body.title,
@@ -38,7 +42,7 @@ exports.addQuest = function (req, res) {
 	}
 };
 
-exports.updateQuest = function (req, res) {
+updateQuest = function (req, res) {
 	if (req.body.title.length > 0) {
 		Quests.update(
 			{questId: req.body.questId},
@@ -57,9 +61,9 @@ exports.updateQuest = function (req, res) {
 	}
 };
 
-// exports.purgeQuests = function (req, res) {
-// 	// Removes all quests
-// 	Quests.find({}).remove().exec();
+purgeQuests = function (req, res) {
+	// Removes all quests
+	Quests.find({}).remove().exec();
 
-// 	res.send('everything was removed');
-// }
+	res.send('everything was removed');
+};

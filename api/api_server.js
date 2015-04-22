@@ -1,11 +1,6 @@
-var db_config = require('./mongodb_config.js'),
-	// Quests = require('./models/quest.js').quest,
-	// Story = require('./models/story.js'),
-	// Person = require('./models/person.js'),
-	// Unit = require('./models/unit.js'),
+var db = require('./mongodb_config.js').db,
+	fables = require('./routes.js').initRoutes(db),
 	express = require('express'),
-	// fable = {},
-	fables = require('./routes.js'),
 	api_server = express(),
 	bodyParser = require('body-parser');
 
@@ -23,88 +18,28 @@ api_server.all('*', function(req, res, next) {
 
 api_server.listen(8300);
 
-api_server.get('/quests', fables.quests);
-api_server.post('/quests/new', fables.addQuest);
-api_server.put('/quests/update', fables.updateQuest);
+// Quests
+api_server.get('/quests', fables.quests.list);
+api_server.post('/quests/new', fables.quests.addQuest);
+api_server.put('/quests/update', fables.quests.updateQuest);
 
+// Units
+api_server.get('/units', fables.units.list);
+api_server.post('/units/new', fables.units.addUnit);
+api_server.put('/units/update', fables.units.updateUnit);
+
+// People
+api_server.get('/people', fables.people.list);
+api_server.post('/people/new', fables.people.addPerson);
+api_server.put('/people/update', fables.people.updatePerson);
+
+// Stories
+api_server.get('/stories', fables.stories.list);
+api_server.post('/stories/new', fables.stories.addStory);
+api_server.put('/stories/update', fables.stories.updateStory);
 
 // USE WITH CAUTION
-// api_server.get('/quests/remove-all', fables.purgeQuests);
-
-// fable = {
-// 	listAllQuests: function	(callBack) {
-// 		return Quests.find({}, callBack);
-// 	},
-// 	listChildQuests: function (questID, callBack) {
-// 		return Quests.findOne({_id: questID}).populate('children').exec(callBack);
-// 	}
-// }
-
-// function errorHandler (res, err) {
-//     res.status(500).send({ error: err });
-// }
-
-
-
-// api_server.get('/quests', function (req, res) {
-// 	// var newTask = new fable.quests({
-// 	// 	title: "Create new db entry 3",
-// 	// 	estimatedTime: 4,
-// 	// 	tag: ['mongodb', 'MeanStack','nodejs'],
-// 	// 	children: ['5531d80f23cc59b24985fe48']
-// 	// });
-
-// 	// newTask.save();
-
-// 	fable.listAllQuests(function (err, quests) {
-// 		if (err) {
-// 			errorHandler(res, err);
-// 		}
-// 		res.json(quests);
-// 		console.log(quests);
-// 	});
-// });
-
-// api_server.get('/subquests', function (req, res) {
-	
-// 	fable.listChildQuests('5531d883c64278244a5562f3', function (err, singleQuest) {
-// 		if (err) {
-// 			console.log(err);
-// 			res.send(err);
-// 		}
-// 		res.json(singleQuest.children);
-// 		console.log(singleQuest.children);
-// 	});
-
-// });
-
-// api_server.get('/stories', function (req, res) {
-// 	Story.list().find({}, function (err, stories) {
-// 		if (err) {
-// 			console.log(err);
-// 			res.send(err);
-// 		}
-// 		res.json(stories);
-// 	});
-// });
-
-// api_server.get('/units', function (req, res) {
-// 	unit.list().find({}, function (err, units) {
-// 		if (err) {
-// 			console.log(err);
-// 			res.send(err);
-// 		}
-// 		res.json(units);
-// 	});
-// });
-
-// api_server.get('/people', function (req, res) {
-// 	Person.list().find({}, function (err, people) {
-// 		if (err) {
-// 			console.log(err);
-// 			res.send(err);
-// 		}
-// 		res.json(people);
-// 	});
-// });
-
+// api_server.get('/quests/remove-all', fables.quests.purgeQuests);
+// api_server.get('/units/remove-all', fables.units.purgeUnits);
+// api_server.get('/people/remove-all', fables.people.purgePeople);
+// api_server.get('/stories/remove-all', fables.people.purgeStories);

@@ -1,8 +1,8 @@
 var mongoose = require('mongoose'), 
-	Schema = mongoose.Schema;
-	// autoIncrement = require('mongoose-auto-increment');
+	Schema = mongoose.Schema,
+	autoIncrement = require('mongoose-auto-increment');
 
-exports.questSchema = new Schema({
+var questSchema = new Schema({
 		title: String,
 		estimatedTime: {
 			type: Number,
@@ -12,3 +12,4 @@ exports.questSchema = new Schema({
 		children: [{type: Number, ref: 'Quest'}]
 	});
 
+exports.docSchema = questSchema;
