@@ -1,140 +1,520 @@
 <div class="row">
 	<div class="col-md-12">
-		<h2 ng-init="showNewQuest=false">
-			Quests 
-			<button type="button" class="btn btn-primary" ng-click="showNewQuest=true">
-				<span class="fa fa-plus"></span>
+		<div class="row">
+			<button type="button" class="btn btn-success" ng-click="showQuests=!showQuests">
+				<span class="fa fa-leaf"></span>&nbsp;&nbsp;
+				Quests
 			</button>
-		</h2>
-		<form class="form-inline" ng-show="showNewQuest">
-			<div class="form-group">
-				<input type="text" class="form-control" ng-model="newQuest.title" placeholder="Title">
-			</div>
-			<div class="form-group">
-				<input type="number" class="form-control" ng-model="newQuest.estimatedTime" placeholder="Estimated Time">
-			</div>
-			<div class="form-group">
-				<input type="text" class="form-control" ng-model="newQuest.tags" placeholder="Tags">
-			</div>
-			<div class="form-group">
-				<label for="questParent">Quest Parent</label>
-				<select ng-model="newQuest.parent">
-					<option ng-repeat="quest in quests" value="{{quest.questId}}">
-						{{quest.title}}
-					</option>
-				</select>
-			</div>
-			<button type="button" class="btn btn-default" ng-click="showNewQuest=false; save(newQuest)">Add</button>
-		</form>
-			
+			<button type="button" class="btn btn-success" ng-click="showStories=!showStories">
+				<span class="fa fa-leanpub"></span>&nbsp;&nbsp;
+				Stories
+			</button>
+			<button type="button" class="btn btn-success" ng-click="showUnits=!showUnits">
+				<span class="fa fa-users"></span>&nbsp;&nbsp;
+				Units
+			</button>
+			<button type="button" class="btn btn-success" ng-click="showPeople=!showPeople">
+				<span class="fa fa-user"></span>&nbsp;&nbsp;
+				People
+			</button>
+<!-- 		<button 
+				type="button" 
+				class="btn btn-warning" 
+				ng-hide="loggedIn()" 
+				ng-click="showLogin=!showLogin">
+				<span class="fa fa-lock"></span>&nbsp;&nbsp;
+				Login
+			</button> -->
+			<!-- <button 
+				type="button" 
+				class="btn btn-success" 
+				ng-show="loggedIn()" 
+				ng-click="logout(); showLogin=true;">
+				<span class="fa fa-check"></span>&nbsp;&nbsp;
+				Logout
+			</button> -->
 		</div>
-		<table class="table table-hover table-condensed">
-			<thead>
-				<tr>
-					<th></th>
-					<th>ID</th>
-					<th>Title</th>
-					<th>Time</th>
-					<th>Tags</th>
-					<th>Parent</th>
-				</tr>
-			</thead>
-			<tfoot>
-				<tr>
-					<td colspan="5"></td>
-				</tr>
-			</tfoot>
-			<tbody>
-				<tr ng-repeat="quest in quests">
-					<td ng-init="editContent=false">
-						<button 
-							type="button" 
-							class="btn btn-link" 
-							ng-show="!editContent" 
-							ng-click="editContent=true">
-							<span class="fa fa-edit"></span>
-						</button>
-						<button
-							type="button" 
-							class="btn btn-link" 
-							ng-show="editContent" 
-							ng-click="editContent=false; update(quest)">
-							<span class="fa fa-check"></span>
-						</button>
-						<button 
-							type="button" 
-							class="btn btn-link" 
-							ng-click="editContent=false"
-							ng-show="editContent">
-							<span class="fa fa-close"></span>
-						</button>
-					</td>
-					<td>{{quest.questId}}</td>
-					<td>
-						<span ng-show="!editContent">{{quest.title}}</span>
-						<input 
-							ng-show="editContent" 
-							type="text" 
-							value="{{quest.title}}" 
-							ng-model="quest.title">
-						</input>
-					</td>
-					<td>
-						<span ng-show="!editContent">{{quest.estimatedTime}}</span>
-						<input 
-							ng-show="editContent" 
-							type="text" 
-							value="{{quest.estimatedTime}}"
-							ng-model="quest.estimatedTime">
-						</input>
-					</td>
-					<td ng-init="showNewTag=false">
-						<button 
-							type="button" 
-							class="btn btn-small btn-info" 
-							ng-click="showNewTag=true"
-							ng-hide="showNewTag">
+		<!-- <div ng-show="showLogin"
+			class="animated" 
+			ng-class="{fadeOutLeft: !showLogin, fadeInUp: showLogin}">
+			<h2>
+				Login
+			</h2>
+			<form class="form-inline" ng-submit="login(fableUser);" novalidate>
+				<div class="form-group">
+					<input type="text" class="form-control" ng-model="fableUser.username" placeholder="Username">
+				</div>
+				<div class="form-group">
+					<input type="password" class="form-control" ng-model="fableUser.password" placeholder="Password">
+				</div>
+				<button type="submit" class="btn btn-primary">
+					Login
+				</button>
+			</form>
+		</div> -->
+		<div ng-show="showQuests" 
+			class="animated" 
+			ng-class="{fadeOutLeft: !showQuests, fadeInUp: showQuests}" 
+			ng-init="showQuests=false">
+			<div class="row">
+				<div class="col-md-4">
+					<h2 ng-init="showNewQuest=false; showUpdateQuestButton=false;">
+						Quests 
+						<button type="button" class="btn btn-primary" ng-click="newQuest={}; showNewQuest=true;">
 							<span class="fa fa-plus"></span>
 						</button>
-						<span  ng-show="showNewTag">
-							<input type="text" ng-model="newTag"></input>
+					</h2>
+					<form class="form" ng-show="showNewQuest">
+						<div class="form-group">
+							<input type="text" class="form-control" ng-model="newQuest.title" placeholder="Title">
+						</div>
+						<div class="form-group">
+							<input type="number" class="form-control" ng-model="newQuest.estimatedTime" placeholder="Estimated Time">
+						</div>
+						<div class="form-group">
+							<ui-select 
+								multiple 
+								tagging
+								tagging-label="&nbsp;<span class='fa fa-comment-o'><span>"
+								ng-model="newQuest.tags" 
+								theme="select2"
+								style="width: 400px;">
+								<ui-select-match placeholder="Select Tags...">{{$item}}</ui-select-match>
+								<ui-select-choices repeat="tag in tags | filter:$select.search">
+									<div ng-bind-html="tag | highlight: $select.search"></div>
+								</ui-select-choices>
+							</ui-select>
+						</div>
+						<div class="form-group">
+							<ui-select 
+								multiple 
+								ng-model="newQuest.children" 
+								theme="select2"
+								style="width: 400px;">
+								<ui-select-match placeholder="Select Quests...">{{$item.title}}</ui-select-match>
+								<ui-select-choices repeat="quest._id as quest in quests | propsFilter: {title: $select.search, tags: $select.search}">
+									<div ng-bind-html="quest.title | highlight: $select.search"></div>
+								</ui-select-choices>
+							</ui-select>
+						</div> 
+						<button 
+							type="button" 
+							ng-if="!showUpdateQuestButton"
+							class="btn btn-default" 
+							ng-click="showNewQuest=false; saveQuest(newQuest);">
+							Add
+						</button>
+						<button 
+							type="button" 
+							class="btn btn-default" 
+							ng-if="showUpdateQuestButton"
+							ng-click="updateQuest(newQuest); showUpdateQuestButton=false; showNewQuest=false;">
+							Update
+						</button>
+						<button type="button" class="btn btn-danger" ng-click="showNewQuest=false; showUpdateQuestButton=false;">x</button>
+					</form>	
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-4" ng-repeat="quest in quests">
+					<div class="box">
+						<div class="pull-right">
 							<button 
 								type="button" 
 								class="btn btn-link" 
-								ng-click="addTag(quest, newTag); showNewTag=false">
-								<span class="fa fa-check"></span>
+								ng-click="$parent.showUpdateQuestButton=true; $parent.newQuest=quest; $parent.showNewQuest=true;">
+								<span class="fa fa-edit text-warning"></span>
 							</button>
-							<button 
-								type="button" 
-								class="btn btn-link" 
-								ng-click="showNewTag=false">
-								<span class="fa fa-close"></span>
-							</button>	
-						</span>
-						<p 
-							ng-repeat="tag in quest.tags" 
-							ng-show="!editContent">
-							{{tag}}
-							<button 
-								type="button" 
-								class="btn btn-link" 
-								ng-click="removeTag(quest.tag, $index);">
+							<button type="button" class="btn btn-link" ng-click="$parent.removeQuest(quest)">
 								<span class="fa fa-close text-danger"></span>
 							</button>
+						</div>
+						<h4>
+							{{quest.title}}
+						</h4>
+						<p><span class="fa fa-clock-o"></span>&nbsp;{{quest.estimatedTime}}</p>
+						<p>
+							<span class="fa fa-tags"></span>&nbsp;
+							<span ng-repeat="tag in quest.tags">
+								{{tag}}<span ng-show="!$last">,&nbsp;</span>
+							</span>
 						</p>
-						<!-- <input ng-show="editContent" type="text" value="{{quest.tag}}"></input> -->
-					</td>
-					<td>
-						<p
-							ng-repeat="child in quest.children" 
-							ng-show="!editContent">
-							{{child}}
-						</p>
-						<!-- <input ng-show="editContent" type="text" value="{{quest.children}}"> 
-						</input> -->
-					</td>
-				</tr>
-			</tbody>
-		</table>
+						<ol>
+							<li ng-repeat="questTask in quest.children">{{questTask.title}}</li>
+						</ol>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div ng-show="showStories" 
+			class="animated" 
+			ng-class="{fadeOutLeft: !showStories, fadeInUp: showStories}" 
+			ng-init="showStories=false">
+			<div class="row">
+				<h2 ng-init="showNewStory=false">
+					Stories
+					<button type="button" class="btn btn-primary" ng-click="showNewStory=true">
+						<span class="fa fa-plus"></span>
+					</button>
+				</h2>
+				<form class="col-sm-4" ng-show="showNewStory">
+					<div class="form-group">
+						<input 
+							type="text" 
+							class="form-control input-sm" 
+							ng-model="newStory.title" 
+							placeholder="Title">
+					</div>
+					<div class="form-group">
+						<ui-select 
+							ng-model="newStory.hero" 
+							theme="select2" 
+							style="width: 100%">
+							<ui-select-match placeholder="Choose a hero...">{{$select.selected.name}}</ui-select-match>
+							<ui-select-choices repeat="hero._id as hero in people | filter: {role: 'hero'} | propsFilter: {name: $select.search}">
+								<span ng-bind-html="hero.name | highlight: $select.search"></span>
+							</ui-select-choices>
+						</ui-select>
+					</div>
+					<div class="form-group">
+						<ui-select 
+							ng-model="newStory.champion" 
+							theme="select2" 
+							style="width: 100%">
+							<ui-select-match placeholder="Choose a champion...">{{$select.selected.name}}</ui-select-match>
+							<ui-select-choices repeat="champion._id as champion in people | filter: {role: 'champion'} | propsFilter: {name: $select.search}">
+								<span ng-bind-html="champion.name | highlight: $select.search"></span>
+							</ui-select-choices>
+						</ui-select>
+					</div>
+					<div class="form-group">
+						<ui-select 
+							multiple 
+							ng-model="newStory.contacts" 
+							theme="select2" 
+							style="width: 100%">
+							<ui-select-match placeholder="Select contacts...">{{$item.name}}</ui-select-match>
+							<ui-select-choices repeat="person._id as person in people | propsFilter: {name: $select.search, role: $select.search}">
+								<div ng-bind-html="person.name | highlight: $select.search"></div>
+								<small>
+									role: {{person.unit.realm}}
+								</small>
+							</ui-select-choices>
+						</ui-select>
+					</div>
+					<div class="form-group">
+						<ui-select 
+							ng-model="newStory.unit" 
+							theme="select2" 
+							style="width: 100%">
+							<ui-select-match placeholder="Select a realm...">{{$select.selected.realm}}</ui-select-match>
+							<ui-select-choices repeat="unit._id as unit in units | propsFilter: {realm: $select.search, land: $select.search}">
+								<span ng-bind-html="unit.realm | highlight: $select.search"></span>
+								<smalll class="text-muted">{{unit.land}}</small>
+							</ui-select-choices>
+						</ui-select>
+					</div>
+					<div class="form-group">
+						<ui-select 
+							multiple 
+							ng-model="newStory.questArray" 
+							theme="select2" 
+							style="width: 100%">
+							<ui-select-match placeholder="Select quests...">{{$item.title}}</ui-select-match>
+							<ui-select-choices repeat="quest in quests | propsFilter: {title: $select.search, tags: $select.search}">
+								<span ng-bind-html="quest.title | highlight: $select.search"></span>
+							</ui-select-choices>
+						</ui-select>
+					</div>
+					<button type="button" class="btn btn-default btn-block" ng-click="showNewStory=false; saveStory(newStory)">Add</button>
+					<button type="button" class="btn btn-danger btn-block" ng-click="showNewStory=false;">Cancel</button>
+				</form>
+			</div>
+			<div class="row">
+				<div class="col-md-6 hidden" ng-repeat="story in stories">
+					<div class="box">
+						<div class="pull-right">
+							<button 
+								type="button" 
+								class="btn btn-link" 
+								ng-click="$parent.showUpdateStoryButton=true; $parent.newStory=story; $parent.showNewStory=true;">
+								<span class="fa fa-edit text-warning"></span>
+							</button>
+							<button type="button" class="btn btn-link" ng-click="$parent.removeStory(quest)">
+								<span class="fa fa-close text-danger"></span>
+							</button>
+						</div>
+						<span class="lead">
+							<a href="#/stories/view/{{story._id}}" class="text-success">
+								<span>#{{story._id}}</span> 
+							</a>
+							{{story.contacts[0].name}}
+							<span class="text-muted">from {{story.contacts[0].unit.realm}}</span>
+						</span>
+						<span 
+							class="fa fa-map-marker" 
+							ng-if="story.contacts[0].location">
+						</span>
+						&nbsp;{{story.contacts[0].location}}&nbsp;
+						<span 
+							class="fa fa-phone" 
+							ng-if="story.contacts[0].phone">
+						</span>
+						&nbsp;{{story.contacts[0].phone}}&nbsp;	
+						<span 
+							class="fa fa-envelope-o" 
+							ng-if="story.contacts[0].email">
+						</span>
+						&nbsp;{{story.contacts[0].email.replace('fiu.edu', 'FIU')}}&nbsp;
+						<p>{{story.title}}</p>
+						<div>
+							<ul class="list-unstyled">
+								<li 
+									class="ticket-chapters" 
+									ng-repeat="chapter in story.timeLine">
+									<span ng-hide="chapter.entryType != 'Quest'">
+										<span 
+											ng-hide="!chapter.completedBy"
+											class="btn tickets-quest-todo">
+											<span 
+												class="fa"
+												ng-click="$parent.completeChapter(chapter.id)" 
+												ng-class="{'fa-circle-thin': !chapter.completeBy}">
+											</span>
+										</span>
+										<span 
+											class="fa" 
+											ng-hide="!chapter.completeBy"
+											ng-class="{'fa-check': chapter.completeBy}">
+										</span>
+									</span>
+									<span 
+										class="fa text-warning"
+										ng-hide="chapter.entryType == 'Quest'"
+										ng-class="{'fa-envelop-o': chapter.entryType == 'email', 'fa-phone': chapter.entryType == 'call'}">
+									</span>
+									{{chapter.title}}
+								</li>
+							</ul>
+						</div>	
+					</div>
+				</div>
+				<div class="ticket-list col-md-12">
+					<accordion close-others="true">
+						<accordion-group ng-repeat="story in stories" is-open="story.expanded">
+							<accordion-heading>
+								<div class="ticket-priority pull-left">
+									<div ng-class="{'ticket-priority-1': story.priority == '1', 'ticket-priority-2': story.priority == '2', 'ticket-priority-3': story.priority == '3'}">
+									</div>
+								</div>
+								<p class="story-lead">
+									<span class="lead">
+										<span class="fa" ng-class="{'fa-check': story.completed == true}"></span>
+										<a href="#/stories/view/{{story.storyId}}" class="text-success">
+											<span>#{{story._id}}</span> 
+										</a>
+										<span class="text-warning">{{story.contacts[0].name}}</span> 
+									</span>
+									<span class="text-muted">from {{story.contacts[0].unit.realm}}</span>
+									<span 
+										class="fa fa-map-marker" 
+										ng-if="story.contacts[0].location">
+										&nbsp;{{story.contacts[0].location}}&nbsp;
+									</span>
+									<span 
+										class="fa fa-phone" 
+										ng-if="story.contacts[0].phone">
+										&nbsp;{{story.contacts[0].phone}}&nbsp;	
+									</span>
+									<span 
+										class="fa fa-envelope-o" 
+										ng-if="story.contacts[0].email">
+										&nbsp;{{story.contacts[0].email.replace('fiu.edu', 'FIU')}}&nbsp;
+									</span>
+									<span class="pull-right ticket-tech">by {{story.hero.name}}</span>
+								</p>
+								<p class="story-title">
+									{{story.title}}
+									<span 
+										class="pull-right story-expand fa" 
+										ng-class="{'fa-angle-down': !story.expanded, 'fa-angle-up': story.expanded}">
+									</span>
+								</p>
+							</accordion-heading>
+							<h4 class="text-fantasy">Chapters</h4>
+							<ul class="list-unstyled">
+								<li class="ticket-chapters" ng-repeat="chapter in story.timeLine" ng-init="chapter.showContent = false">
+									<p class="">
+										<span ng-hide="chapter.entryType == 'Quest'">
+											<span 
+												class="fa text-warning"
+												ng-class="{'fa-envelop-o': chapter.entryType == 'email', 'fa-phone': chapter.entryType == 'call', 'hidden': chapter.entryType == 'Questline'}">
+											</span>
+											{{chapter.title}}
+										</span>
+										<span ng-show="chapter.entryType == 'Quest'"
+											ng-click="completeChapter(chapter, story)"
+											class="btn">
+											<span 
+												class="fa fa-check" 
+												ng-class="{'fa-check': chapter.completedBy != undefined, 'fa-circle-thin': chapter.completedBy == undefined}">
+											</span>
+											{{chapter.title}}
+										</span>
+										<button
+											type="button"
+											ng-click="chapter.showContent = !chapter.showContent"
+											class="btn btn-link"
+											ng-show="chapter.content.length > 0">
+											<span class="fa" ng-class="{'fa-angle-up': chapter.showContent, 'fa-angle-down': !chapter.showContent}"></span>
+										</button>
+									</p>
+									<blockquote class="text-left-indent" ng-show="chapter.showContent">
+										{{chapter.content}}
+									</blockquote>
+								</li>
+							</ul>
+						</accordion-group>
+					</accordion>
+				</div>
+			</div>
+		</div>
+		<div ng-show="showUnits" 
+			class="animated" 
+			ng-class="{fadeOutLeft: !showUnits, fadeInUp: showUnits}" 
+			ng-init="showUnits=false">
+			<div class="row">
+				<h2 ng-init="showNewUnit=false">
+					Units 
+					<button type="button" class="btn btn-primary" ng-click="showNewUnit=true">
+						<span class="fa fa-plus"></span>
+					</button>
+				</h2>
+				<form class="form-inline" ng-show="showNewUnit">
+					<div class="form-group">
+						<input type="text" class="form-control" ng-model="newUnit.realm" placeholder="Realm">
+					</div>
+					<div class="form-group">
+						<ui-select 
+							ng-model="newUnit.land" 
+							theme="select2" 
+							style="width: 200px;">
+							<ui-select-match placeholder="Select Land...">{{$select.selected.realm}}</ui-select-match>
+							<ui-select-choices repeat="unit.realm as unit in units | propsFilter: {realm: $select.search, land: $select.search}">
+								<span ng-bind-html="unit.realm | highlight: $select.search"></span>
+								<smalll class="text-muted">{{unit.land}}</small>
+							</ui-select-choices>
+						</ui-select>
+					</div>
+					<button type="button" class="btn btn-default" ng-click="showNewUnit=false; saveUnit(newUnit);" ng-show="!showEditButton">Add</button>
+					<button 
+						type="button" 
+						class="btn btn-primary" 
+						ng-click="showNewUnit=false; editUnit(newUnit); showEditButton=false;" 
+						ng-show="showEditButton">Save
+					</button>
+					<button type="button" class="btn btn-danger" ng-click="showNewUnit=false; showEditButton=false; newUnit={}">x</button>
+				</form>	
+			</div>
+			<div class="row">
+				<p ng-repeat="unit in units">
+					<button 
+						type="button"
+						class="btn btn-link"
+						ng-click="removeUnit(unit)">
+						<span class="fa fa-close text-danger"></span>
+					</button>
+					<button 
+						type="button" 
+						class="btn btn-link" 
+						ng-click="$parent.showNewUnit=true; $parent.newUnit=unit; $parent.showEditButton=true;">
+						<span class="fa fa-users text-default"></span>&nbsp;{{unit.realm}} 
+					</button>
+					<span class="text-muted">{{unit.land}}</span>
+				</p>
+			</div>
+		</div>
+		<div ng-show="showPeople" 
+			class="animated" 
+			ng-class="{fadeOutLeft: !showPeople, fadeInUp: showPeople}" 
+			ng-init="showPeople=false">
+			<div class="row">
+				<div class="col-md-4">
+					<h2 ng-init="showNewPerson=false">
+						People 
+						<button type="button" class="btn btn-primary" ng-click="showNewPerson=true">
+							<span class="fa fa-plus"></span>
+						</button>
+					</h2>
+					<form class="form" ng-show="showNewPerson">
+						<div class="form-group">
+							<select class="form-control">
+								<option 
+									ng=model="newPerson.role"
+									ng-repeat="role in ['champion','hero','contact','vendor']"
+									value="{{role}}">
+									{{role}}
+								</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<input type="text" class="form-control" ng-model="newPerson.pid" placeholder="Panther ID">
+						</div>
+						<div class="form-group">
+							<input type="text" class="form-control" ng-model="newPerson.name" placeholder="Name">
+						</div>
+						<div class="form-group">
+							<input type="email" class="form-control" ng-model="newPerson.email" placeholder="Email">
+						</div>
+						<div class="form-group">
+							<input type="text" class="form-control" ng-model="newPerson.phone" placeholder="Office Phone">
+						</div>
+						<div class="form-group">
+							<input type="text" class="form-control" ng-model="newPerson.mobile" placeholder="Mobile Number">
+						</div>
+						<div class="form-group">
+							<input type="text" class="form-control" ng-model="newPerson.title" placeholder="Job Title">
+						</div>
+						<div class="form-group">
+							<ui-select 
+								ng-model="newPerson.unit" 
+								theme="select2" 
+								style="width: 200px;">
+								<ui-select-match placeholder="Select Realm...">{{$select.selected.realm}}</ui-select-match>
+								<ui-select-choices repeat="unit._id as unit in units | propsFilter: {realm: $select.search, land: $select.search}">
+									<span ng-bind-html="unit.realm | highlight: $select.search"></span>
+									<smalll class="text-muted">{{unit.land}}</small>
+								</ui-select-choices>
+							</ui-select>
+						</div>
+						<button type="button" class="btn btn-default" ng-click="showNewPerson=false; savePerson(newPerson);" ng-show="!showEditButton">Add</button>
+						<button 
+							type="button" 
+							class="btn btn-primary" 
+							ng-click="showNewPerson=false; editPerson(newPerson); showEditButton=false;" 
+							ng-show="showEditButton">Save
+						</button>
+						<button type="button" class="btn btn-danger" ng-click="showNewPerson=false; showEditButton=false; newPerson={}">x</button>
+					</form>	
+				</div>
+			</div>
+			<div class="row">
+				<p ng-repeat="person in people">
+					<button 
+						type="button"
+						class="btn btn-link"
+						ng-click="removePerson(person)">
+						<span class="fa fa-close text-danger"></span>
+					</button>
+					<button 
+						type="button" 
+						class="btn btn-link" 
+						ng-click="$parent.showNewPerson=true; $parent.newPerson=person; $parent.showEditButton=true;">
+						<span class="fa fa-user text-default"></span>&nbsp;{{person.name}} 
+					</button>
+					<span class="text-muted">{{person.unit.realm}}</span>
+				</p>
+			</div>
+		</div>
 	</div>
 </div>

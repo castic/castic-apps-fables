@@ -7,34 +7,39 @@ exports.setRoute = function (db) {
 		list: list,
 		addQuest: addQuest,
 		updateQuest: updateQuest,
+		removeQuest: removeQuest,
 		purgeQuests: purgeQuests
 	}
 }
 
 list = function (req, res) {
-	Quests.find({}, function (err, quests) {
-		if (err) {
-			console.log(err);
-			// res.send(err);
-		}
-		res.json(quests);
-		// console.log(quests);
-	});
-
-	// Removes all quests
-	// Quests.find({}).remove().exec();
+	Quests.find({})
+		.populate('children')
+		.exec(function (err, quests) {
+			if (err) {
+				console.log(err);
+				res.send(err);
+			}
+			res.json(quests);
+			// console.log(quests);
+		});
 };
 
 addQuest = function (req, res) {
-	if (req.body.title.length > 0) {
+	if (req.body.title !== "") {
+		
+		console.log('adding new quest... ', req.body.title);
+
 		var newTask = new Quests({
 			title: req.body.title,
 			estimatedTime: req.body.estimatedTime,
-			tags: [req.body.tags],
-			children: []
+			tags: req.body.tags,
+			children: req.body.children
 		});
 
 		newTask.save(function (err, result) {
+			console.log('...done');
+			console.log(result);
 			res.send(result);
 		});	
 	} else {
@@ -44,13 +49,16 @@ addQuest = function (req, res) {
 
 updateQuest = function (req, res) {
 	if (req.body.title.length > 0) {
+		console.log(req.body._id);
+
 		Quests.update(
-			{questId: req.body.questId},
+			{_id: req.body._id},
 			{ 
 				$set: {
 					title: req.body.title,
 					estimatedTime: req.body.estimatedTime,
-					tags: [req.body.tags]	
+					tags: req.body.tags,
+					children: req.body.children
 				}
 			}, function	(err, rows, dbResponse) {
 				res.send(rows);				
@@ -59,6 +67,16 @@ updateQuest = function (req, res) {
 	} else {
 		res.send('nothing to update');
 	}
+};
+
+removeQuest = function (req, res) {
+	Quests.findOne({_id: req.params.questId}).remove(function (err, message) {
+		if (err) {
+			res.send('nothing to delete');
+		}
+		console.log('removed _id: ',req.params.questId, 'from the db');
+		res.send(message);
+	});
 };
 
 purgeQuests = function (req, res) {

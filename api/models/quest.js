@@ -1,8 +1,8 @@
 var mongoose = require('mongoose'), 
-	Schema = mongoose.Schema,
-	autoIncrement = require('mongoose-auto-increment');
+	Schema = mongoose.Schema;
 
 var questSchema = new Schema({
+		_id: Number,
 		title: String,
 		estimatedTime: {
 			type: Number,

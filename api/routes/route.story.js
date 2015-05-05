@@ -7,19 +7,30 @@ exports.setRoute = function (db) {
 		list: list,
 		addStory: addStory,
 		updateStory: updateStory,
+		removeStory: removeStory,
 		purgeStories: purgeStories
 	}
 }
 
 list = function (req, res) {
-	Stories.find({}, function (err, stories) {
-		if (err) {
-			console.log(err);
-			// res.send(err);
-		}
-		res.json(stories);
-		// console.log(stories);
-	});
+	Stories.find({})
+		.populate('hero champion contacts unit')
+		.exec(function (err, docs) {
+			var options = [
+				{path: 'hero.unit', model: 'Unit'},
+				{path: 'champion.unit', model: 'Unit'},
+				{path: 'contacts.unit', model: 'Unit'}
+			];
+
+			if (err) {
+				console.log(err);
+				res.send(err);
+			}
+
+			Stories.populate(docs, options, function (err, stories) {
+				res.json(stories);
+			});
+		});
 
 	// Removes all stories
 	// Stories.find({}).remove().exec();
@@ -29,10 +40,10 @@ addStory = function (req, res) {
 	if (req.body.title.length > 0) {
 		var newTask = new Stories({
 			title: req.body.title,
-			hero: req.body.heroId,
-			champion: req.body.championId,
+			hero: req.body.hero,
+			champion: req.body.champion,
 			contacts: req.body.contacts,
-			unit: req.body.unitId,
+			unit: req.body.unit,
 			timeLine: req.body.timeLine,
 			// assets: [{type: Number, ref: 'Asset'}],
 			// timeCreated: { type: Date, default: Date.now }
@@ -48,19 +59,32 @@ addStory = function (req, res) {
 
 updateStory = function (req, res) {
 	if (req.body.title.length > 0) {
+		
+		// var contacts = [];
+		var updatedStory = {
+			title: req.body.title,
+			hero: req.body.hero._id,
+			champion: req.body.champion._id,
+			contacts: [],
+			// unit: req.body.unit._id,
+			timeLine: req.body.timeLine,
+			completed: req.body.completed
+			// assets: [{type: Number, ref: 'Asset'}],
+			// timeCreated: { type: Date, default: Date.now }	
+		};
+
+		for (var i = req.body.contacts.length - 1; i >= 0; i--) {
+			updatedStory.contacts.push(req.body.contacts[i]._id)
+		};
+
+		if (req.body.unit == null) {
+			updatedStory.unit = req.body.contacts[0].unit._id;
+		}
+
 		Stories.update(
-			{storyId: req.body.storyId},
+			{_id: req.body._id},
 			{ 
-				$set: {
-					title: req.body.title,
-					hero: req.body.heroId,
-					champion: req.body.championId,
-					contacts: req.body.contacts,
-					unit: req.body.unitId,
-					timeLine: req.body.timeLine,
-					// assets: [{type: Number, ref: 'Asset'}],
-					// timeCreated: { type: Date, default: Date.now }	
-				}
+				$set: updatedStory
 			}, function	(err, rows, dbResponse) {
 				res.send(rows);				
 			}
@@ -68,6 +92,16 @@ updateStory = function (req, res) {
 	} else {
 		res.send('nothing to update');
 	}
+};
+
+removeStory = function (req, res) {
+	Stories.findOne({_id: req.params.storyId}).remove(function (err, message) {
+		if (err) {
+			res.send('nothing to delete');
+		}
+		console.log('removed _id: ',req.params.storyId, 'from the db');
+		res.send(message);
+	});
 };
 
 purgeStories = function (req, res) {
