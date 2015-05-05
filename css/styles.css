@@ -265,6 +265,30 @@ button.dropdown-toggle {
 	margin-left: 10px;
 }
 
+.pull-right.ticket-tech {
+	margin-top: 10px;
+	margin-right: 10px;
+}
+
+.panel-heading {
+	height: inherit;
+}
+
+.panel-title {
+	font-size: 14px;
+}
+
+.story-title {
+	margin: 0px
+}
+
+.story-title .story-expand {
+	margin-right: 10px;
+}
+
+.story-lead>span {
+	display: inline-block;
+}
 /* 
  * Light Style 
  */

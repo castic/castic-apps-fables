@@ -7,19 +7,26 @@ exports.setRoute = function (db) {
 		list: list,
 		addUnit: addUnit,
 		updateUnit: updateUnit,
+		removeUnit: removeUnit,
 		purgeUnits: purgeUnits
 	}
 }
 
 list = function (req, res) {
-	Units.find({}, function (err, units) {
-		if (err) {
-			console.log(err);
-			// res.send(err);
-		}
-		res.json(units);
-		// console.log(units);
-	});
+	
+	// console.log(req.session, 'in route.units.list');
+
+	// if (req.session && req.session.user) {
+		Units.find({}, function (err, units) {
+			if (err) {
+				console.log(err);
+				// res.send(err);
+			}
+			res.json(units);
+			// console.log(units);
+		});
+	// } else res.send([]);
+
 };
 
 addUnit = function (req, res) {
@@ -38,9 +45,9 @@ addUnit = function (req, res) {
 };
 
 updateUnit = function (req, res) {
-	if (req.body.title.length > 0) {
+	if (req.body.realm.length > 0) {
 		Units.update(
-			{unitId: req.body.unitId},
+			{_id: req.body._id},
 			{ 
 				$set: {
 					realm: req.body.realm,
@@ -53,6 +60,16 @@ updateUnit = function (req, res) {
 	} else {
 		res.send('nothing to update');
 	}
+};
+
+removeUnit = function (req, res) {
+	Units.findOne({_id: req.params.unitId}).remove(function (err, message) {
+		if (err) {
+			res.send('nothing to delete');
+		}
+		console.log('removed id: ',req.params.unitId, 'from the db');
+		res.send(message);
+	});
 };
 
 purgeUnits = function (req, res) {

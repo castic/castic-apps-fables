@@ -32,7 +32,7 @@
 	</div>
 	<div class="ticket-list col-md-8">
 		<accordion close-others="true">
-			<accordion-group ng-repeat="story in stories | filter:{tech:assignedTech}" is-open="story.expanded">
+			<accordion-group ng-repeat="story in stories" is-open="story.expanded">
 				<accordion-heading>
 					<div class="ticket-priority pull-left">
 						<div ng-class="{'ticket-priority-1': story.priority == '1', 'ticket-priority-2': story.priority == '2', 'ticket-priority-3': story.priority == '3'}">
@@ -40,38 +40,38 @@
 					</div>
 					<p class="lead">
 						<a href="#/stories/view/{{story.storyId}}" class="text-success">
-							<span>#{{story.storyId}}</span> 
+							<span>#{{story._id}}</span> 
 						</a>
 						{{story.title}} for 
-						<span class="text-warning">{{story.contact}}</span> in {{story.department}} 
+						<span class="text-warning">{{story.contacts[0].name}}</span> in {{story.contacts[0].unit.realm}} 
 						<span class="pull-right fa" ng-class="{'fa-angle-down': !story.expanded, 'fa-angle-up': story.expanded}"></span>
-						<small class="pull-right ticket-tech">by {{story.tech}}</small>
+						<small class="pull-right ticket-tech">by {{story.hero.name}}</small>
 					</p>
 				</accordion-heading>
-				<h4 class="text-fantasy">Quests</h4>
+				<h4 class="text-fantasy">Chapters</h4>
 				<ul class="list-unstyled">
-					<li class="ticket-chapters" ng-repeat="chapter in story.timeline" ng-init="chapter.showContent = false">
+					<li class="ticket-chapters" ng-repeat="chapter in story.timeLine" ng-init="chapter.showContent = false">
 						<p class="">
-							<span ng-hide="chapter.type != 'quest'">
+							<span ng-hide="chapter.entryType != 'Quest'">
 								<span 
-									ng-hide="chapter.complete == true"
+									ng-hide="chapter.completedBy != undefined"
 									class="btn tickets-quest-todo">
 									<span 
 										class="fa"
-										ng-click="chapter.complete = true" 
-										ng-class="{'fa-circle-thin': chapter.complete == false}">
+										ng-click="chapter.completedBy = story.hero._id" 
+										ng-class="{'fa-circle-thin': chapter.completedBy == undefined}">
 									</span>
 								</span>
 								<span 
 									class="fa" 
-									ng-hide="chapter.complete == false"
-									ng-class="{'fa-check': chapter.complete == true}">
+									ng-hide="chapter.completedBy == undefined"
+									ng-class="{'fa-check': chapter.completedBy != undefined}">
 								</span>
 							</span>
 							<span 
 								class="fa text-warning"
-								ng-hide="chapter.type == 'quest'"
-								ng-class="{'fa-envelop-o': chapter.type == 'email', 'fa-phone': chapter.type == 'call'}">
+								ng-hide="chapter.entryType == 'Quest'"
+								ng-class="{'fa-envelop-o': chapter.entryType == 'email', 'fa-phone': chapter.entryType == 'call'}">
 							</span>
 							{{chapter.title}}
 							<button
@@ -82,7 +82,9 @@
 								<span class="fa" ng-class="{'fa-angle-up': chapter.showContent, 'fa-angle-down': !chapter.showContent}"></span>
 							</button>
 						</p>
-						<blockquote class="text-left-indent" ng-show="chapter.showContent">{{chapter.content}}</blockquote>
+						<blockquote class="text-left-indent" ng-show="chapter.showContent">
+							{{chapter.content}}
+						</blockquote>
 					</li>
 				</ul>
 			</accordion-group>

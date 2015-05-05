@@ -7,29 +7,33 @@ exports.setRoute = function (db) {
 		list: list,
 		addPerson: addPerson,
 		updatePerson: updatePerson,
+		removePerson: removePerson,
 		purgePeople: purgePeople
 	}
 }
 
 list = function (req, res) {
-	People.find({}, function (err, people) {
-		if (err) {
-			console.log(err);
-			// res.send(err);
-		}
-		res.json(people);
-		// console.log(people);
-	});
+	People.find({})
+		.populate('unit')
+		.exec(function (err, people) {
+			if (err) {
+				console.log(err);
+				// res.send(err);
+			}
+			res.json(people);
+			// console.log(people);
+		});
 };
 
 addPerson = function (req, res) {
-	if (req.body.realm.length > 0) {
+	if (req.body.name.length > 0) {
 		var newTask = new People({
 			pid: req.body.pid,
 			name: req.body.name,
 			email: req.body.email,
 			phone: req.body.phone,
-			unit: req.body.unitId,
+			mobile: req.body.mobile,
+			unit: req.body.unit,
 			title: req.body.title,
 			location: req.body.location,
 			role: req.body.role
@@ -47,16 +51,17 @@ addPerson = function (req, res) {
 };
 
 updatePerson = function (req, res) {
-	if (req.body.title.length > 0) {
+	if (req.body.name.length > 0) {
 		People.update(
-			{personId: req.body.personId},
+			{_id: req.body._id},
 			{ 
 				$set: {
 					pid: req.body.pid,
 					name: req.body.name,
 					email: req.body.email,
 					phone: req.body.phone,
-					unit: req.body.unitId,
+					mobile: req.body.mobile,
+					unit: req.body.unit,
 					title: req.body.title,
 					location: req.body.location,
 					role: req.body.role
@@ -68,6 +73,16 @@ updatePerson = function (req, res) {
 	} else {
 		res.send('nothing to update');
 	}
+};
+
+removePerson = function (req, res) {
+	Persons.findOne({_id: req.params.personId}).remove(function (err, message) {
+		if (err) {
+			res.send('nothing to delete');
+		}
+		console.log('removed id: ',req.params.personId, 'from the db');
+		res.send(message);
+	});
 };
 
 purgePeople = function (req, res) {

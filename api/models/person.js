@@ -6,14 +6,12 @@ var personSchema = new Schema({
 		name: String,
 		email: String,
 		phone: String,
+		mobile: String,
 		unit: {type: Number, ref: 'Unit'},
 		title: String,
 		location: String,
-		role: {
-			type: String,
-			enum: ['hero','champion','contact','vendor','unit']
-		},
-		abilities:[{type: Number, ref: 'Tag'}],
+		role: String,
+		abilities:[String],
 		stories: [{type: Number, ref: 'Story'}],
 		assets: [{type: Number, ref: 'Asset'}]
 	});

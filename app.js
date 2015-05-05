@@ -2,10 +2,16 @@ var app = angular.module('casticApp', [
 	'ngRoute', 
 	'ui.bootstrap.accordion', 
 	'ui.bootstrap.dropdown',
-	'ngAnimate'
+	'ngAnimate',
+	'ngSanitize',
+	'ngCookies',
+	'ui.select'
 	]);
 
-app.config(['$routeProvider', function ($routeProvider) {
+app.config(['$routeProvider', '$httpProvider', function ($routeProvider, $httpProvider) {
+    
+    $httpProvider.defaults.withCredentials = true;
+
     $routeProvider.
         when('/', {
             templateUrl: 'partials/dashboard.html',
@@ -26,13 +32,59 @@ app.config(['$routeProvider', function ($routeProvider) {
         when('/admin', {
             templateUrl: 'partials/admin.html',
             controller: 'AdminCtrl'
+        })
+        .when('/login', {
+            controller: 'AppCtrl'
         }).
         otherwise({
         	redirectTo: '/'
         });
 }]);
 
-app.controller('AppCtrl', ['$scope', '$interval', function($scope, $interval){
+app.filter('propsFilter', function() {
+	return function(items, props) {
+		var out = [];
+
+		if (angular.isArray(items)) {
+			items.forEach(function(item) {
+				var itemMatches = false;
+
+				var keys = Object.keys(props);
+				for (var i = 0; i < keys.length; i++) {
+					var prop = keys[i];
+					var text = props[prop].toLowerCase();
+					if (item[prop].toString().toLowerCase().indexOf(text) !== -1) {
+						itemMatches = true;
+						break;
+					}
+				}
+
+				if (itemMatches) {
+					out.push(item);
+				}
+			});
+		} else {
+			// Let the output be the input untouched
+			out = items;
+		}
+
+		return out;
+	};
+});
+
+app.run(['$rootScope', '$location', 'DataService', 'AuthService', function ($rootScope, $location, DataService, AuthService) {
+	
+	// $rootScope.$on('$routeChangeStart', function (event, next, current) {
+			
+	// 	console.log('getting userSession');
+	// 	console.log( 'path: ', $location.url(), ' Logged in: ' ,AuthService.isLoggedIn() );
+
+	// 	if ( !AuthService.isLoggedIn() ) $location.path('/login');
+
+ //    });
+}]);
+
+app.controller('AppCtrl', ['$scope', '$interval', 'AuthService', '$location', function ($scope, $interval, AuthService, $location){
 	$scope.tickets = {
 		assignedCount: 10,
 		unassignedCount: 2
@@ -42,404 +94,326 @@ app.controller('AppCtrl', ['$scope', '$interval', function($scope, $interval){
 		window.scrollTo(0,0);
 	};
 
+	$scope.authed = false;
+
+	$scope.$on('logged out', function (event, args) {
+		$scope.authed = false;
+	});
+
+	$scope.login = function (user) {
+
+		if (user.username.length > 0 && user.password.length > 7) {
+			AuthService.login(user)
+				.then(function (response) {
+					$scope.authed = true;
+					$location.path('/');
+					console.log('Logged in successfully ', response.data.user);
+				});
+		}
+	};
+
 	$interval(function (){
 		$scope.yPos =  document.body.scrollTop;
 	}, 50);
 
 }]);
 
-app.controller('AdminCtrl', ['$scope', 'DataService', function ($scope, DataService) {
-	DataService.Quests.list()
-		.success(function (quests) {
-			$scope.quests = quests;
-		});
+app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location', function ($scope, DataService, AuthService, $location) {
+	
+	$scope.quests = [];
+	$scope.stories = [];
+	$scope.units = [];
+	$scope.people = [];
+	$scope.tags = [];
+	$scope.newStory = {};
 
-	$scope.save = function (quest) {
-		console.log(quest);
+	// $scope.loggedIn = function () {
+	// 	return AuthService.isLoggedIn();
+	// };
 
-		DataService.Quests.add(quest)
-			.success(function (quest) {
-				console.log('saved to db ', quest);	
-				$scope.quests.push(quest);
+	// $scope.showLogin = true;
+	// if ( $cookies.session ) {
+	// 	$scope.loggedIn = true;
+	// } else $scope.loggedIn = false;
+
+	getQuests = function () {
+		DataService.Quests.list()
+			.success(function (quests) {
+				$scope.tags = uniq(getTags(quests));
+				$scope.quests = quests;
+				getUnits();
+			});
+		};
+
+	getUnits = function () {
+		DataService.Units.list()
+			.success(function (units) {
+				$scope.units = units;
+				getPeople();
+			});	
+		};
+	
+	getPeople = function () {
+		DataService.People.list()
+			.success(function (people) {
+				$scope.people = people;
+				getStories();
+			});	
+		};
+
+	getStories = function () {
+		DataService.Stories.list()
+			.success(function (stories) {
+				console.log(stories);
+				$scope.stories = stories;
+				$scope.stories.completeChapter = function (chapter, hero) {
+					return completeChapter(chapter, hero);
+				};
 			});
 	};
 
-	$scope.update = function (quest) {
+	completeChapter = function (chapter, hero) {
+		
+		if (chapter.completedBy) {
+			chapter.completedBy == '';
+			return;
+		}
+
+		chapter.completedBy = hero._id;
+		
+		if (chapter.entryType == 'Quest') {
+			chapter.details.timeCompleted = Date.now;
+		}
+
+	};
+
+	getTags = function (quests) {
+		var tagsArray = [];
+		
+		angular.forEach(quests, function (quest) {
+			angular.forEach(quest.tags, function (tag) {
+				tagsArray.push(tag);
+			});
+		});
+
+		return tagsArray;
+	}
+
+	uniq = function (a) {
+	    return a.sort().filter(function(item, pos, ary) {
+	        return !pos || item != ary[pos - 1];
+	    });
+	};
+
+	getQuests();
+
+	$scope.toJson = function (obj) {
+		return angular.toJson (obj, true);
+	};
+
+	addQuestToTimeline = function (quest, timeLine, newStory, entryType) {
+
+		var tl = {
+			entryType: entryType || 'Quest',
+			title: quest.title,
+			createdBy: newStory.hero,
+			tags: quest.tags,
+			details: {
+				estimatedTime: quest.estimatedTime,
+			}
+		};
+
+		if (entryType == 'Questline') {
+			tl.completedBy = newStory.hero
+		}
+
+		timeLine.push(tl);
+
+		return timeLine;
+	};
+
+	createTimelineEntry = function (newStory, questArray, timeLine) {
+
+		angular.forEach(questArray, function (quest) {
+
+			if (quest.children.length == 0) {
+				timeLine = addQuestToTimeline(quest, timeLine, newStory);
+			} else {
+				console.log('got children');
+				timeLine = addQuestToTimeline(quest, timeLine, newStory, 'Questline');
+				timeLine = createTimelineEntry(newStory, quest.children, timeLine);
+			}
+		});
+
+		return timeLine;
+		
+	};
+
+	$scope.saveStory = function (newStory) {
+
+		newStory.timeLine = createTimelineEntry(newStory, newStory.questArray, []);
+		// newStory.unit = newStory.unit.unitId;
+
+		console.log(newStory);
+		// $scope.stories.push(newStory);
+
+		DataService.Stories.add(newStory)
+			.success(function (story) {
+				console.log('saved to db ', story);	
+				getStories();
+			});
+	};
+
+	updateStory = function (updatedStory) {
+		DataService.Stories.update(updatedStory)
+			.success(function (story) {
+				console.log('saved to db ', story);	
+			});
+	};
+
+	$scope.completeChapter = function (chapter, story) {
+		
+		if (chapter.completedBy) {
+			chapter.completedBy = undefined;
+			chapter.details.timeCompleted = undefined;
+			story.completed = false;
+		} else {
+			chapter.completedBy = story.hero._id;
+			chapter.details.timeCompleted = Date.now();
+
+			story.completed = story.timeLine.every(function (currentChapter, index) {
+				if (currentChapter.completedBy) {
+					return true;
+				} else return false;
+			});
+		}
+
+		updateStory(story);
+	};
+
+	$scope.reopenChapter = function (chapter, story) {
+		chapter.completedBy = undefined;
+		chapter.details.timeCompleted = undefined;
+		story.completed = false;
+
+		updateStory(story);
+	};
+
+
+	$scope.logout = function () {
+		AuthService.logout()
+			.then(function (response) {
+				console.log(response);
+				$location.path('/login');
+			});
+	};
+
+	$scope.login = function (user) {
+		if (user.username.length > 0 && user.password.length > 7) {
+			AuthService.login(user)
+				.then(function (response) {
+					$scope.fableUser = response.data.user;
+					$scope.showLogin = false;
+					getUnits();
+					console.log('Logged in successfully ', response.data.user);
+				});
+		}
+	};
+
+	$scope.savePerson = function (person) {
+		console.log(person);
+
+		DataService.People.add(person)
+			.success(function (person) {
+				console.log('saved to db ', person);	
+				getPeople();
+			});
+	};
+
+	$scope.editPerson = function (person) {
+		console.log('before save: ',person);
+
+		DataService.People.update(person)
+			.success(function (person) {
+				console.log('updated: ', person);	
+				getPeople();
+			});
+	};
+
+	$scope.saveUnit = function (unit) {
+		console.log(unit);
+
+		DataService.Units.add(unit)
+			.success(function (unit) {
+				console.log('saved to db ', unit);	
+				$scope.units.push(unit);
+			});
+	};
+
+	$scope.editUnit = function (unit) {
+		console.log(unit);
+
+		DataService.Units.update(unit)
+			.success(function (unit) {
+				console.log('updated in db ', unit);	
+			});
+	};
+
+	$scope.removeUnit = function (unit) {
+		DataService.Units.remove(unit)
+			.success(function (message) {
+				$scope.units.every(function (currentUnit ,index) {
+					if (currentUnit._id == unit._id) {
+						$scope.units.splice(index, 1);
+						return false;
+					} else return true
+				});
+			});
+	};
+
+	$scope.removeQuest = function (quest) {
+		DataService.Quests.remove(quest)
+			.success(function (message) {
+				console.log(message);
+
+				$scope.quests.every(function (current, index) {
+					if (current._id == quest._id) {
+						$scope.quests.splice(index, 1);
+						return false;
+					} else return true
+				});
+			});
+	};
+
+	$scope.saveQuest = function (quest) {
+		// console.log(quest);
+
+		DataService.Quests.add(quest)
+			.success(function (savedQuest) {
+				console.log('saved to db ', savedQuest);	
+				getQuests();
+			});
+	};
+
+	$scope.updateQuest = function (quest) {
 		console.log(quest);
 
 		DataService.Quests.update(quest)
 			.success(function (rows) {
-				console.log('updated ' + rows.nModified + ' item(s) in db');	
+				console.log('updated ' + rows.nModified + ' item(s) in db');
+				getQuests();
 			});
 	};
 	
 }]);
 
-app.service('DataService', ['$http', function ($http) {
-	var storiesOld = [
-		{
-			storyId: 2, 
-			title: 'Install mouse',
-			contact: 'David Chatfield',
-			tech: 'Amir',
-			department: 'Chemistry',
-			dateModified: '04/06/2015',
-			priority: 3,
-			timeline: [
-				{
-					id: 0,
-					title: 'Get Logitech Mouse',
-					content: 'Found a mouse on ebay for 2 cents',
-					complete: true,
-					type: 'quest',
-					createBy: 'Amir',
-					createdOn: '04/06/2015',
-					timeCompleted: '04/06/2015'
-				},{
-					id: 0,
-					title: 'Get Logitech Mouse',
-					content: 'Found a mouse on ebay for 2 cents',
-					complete: true,
-					type: 'quest',
-					createBy: 'Amir',
-					createdOn: '04/06/2015',
-					timeCompleted: '04/06/2015'
-				},{
-					id: 0,
-					title: 'Get Logitech Mouse',
-					content: 'Found a mouse on ebay for 2 cents',
-					complete: true,
-					type: 'quest',
-					createBy: 'Amir',
-					createdOn: '04/06/2015',
-					timeCompleted: '04/06/2015'
-				},{
-					id: 0,
-					title: 'Get Logitech Mouse',
-					content: 'Found a mouse on ebay for 2 cents',
-					complete: true,
-					type: 'quest',
-					createBy: 'Amir',
-					createdOn: '04/06/2015',
-					timeCompleted: '04/06/2015'
-				},{
-					id: 0,
-					title: 'Get Logitech Mouse',
-					content: 'Found a mouse on ebay for 2 cents',
-					complete: true,
-					type: 'quest',
-					createBy: 'Amir',
-					createdOn: '04/06/2015',
-					timeCompleted: '04/06/2015'
-				},{
-					id: 0,
-					title: 'Get Logitech Mouse',
-					content: 'Found a mouse on ebay for 2 cents',
-					complete: true,
-					type: 'quest',
-					createBy: 'Amir',
-					createdOn: '04/06/2015',
-					timeCompleted: '04/06/2015'
-				},{
-					id: 0,
-					title: 'Get Logitech Mouse',
-					content: 'Found a mouse on ebay for 2 cents',
-					complete: true,
-					type: 'quest',
-					createBy: 'Amir',
-					createdOn: '04/06/2015',
-					timeCompleted: '04/06/2015'
-				},{
-					id: 0,
-					title: 'Get Logitech Mouse',
-					content: 'Found a mouse on ebay for 2 cents',
-					complete: true,
-					type: 'quest',
-					createBy: 'Amir',
-					createdOn: '04/06/2015',
-					timeCompleted: '04/06/2015'
-				},{
-					id: 0,
-					title: 'Get Logitech Mouse',
-					content: 'Found a mouse on ebay for 2 cents',
-					complete: true,
-					type: 'quest',
-					createBy: 'Amir',
-					createdOn: '04/06/2015',
-					timeCompleted: '04/06/2015'
-				},
-				{
-					id: 1,
-					title: 'Schedule an Appointment',
-					content: '',
-					complete: true,
-					type: 'quest',
-					createBy: 'Amir',
-					createdOn: '04/06/2015',
-					timeCompleted: '04/06/2015'
-				},
-				{
-					id: 2,
-					title: 'Received call from user',
-					content: '',
-					complete: true,
-					type: 'call',
-					createBy: 'Amir',
-					createdOn: '04/06/2015',
-					timeCompleted: '04/06/2015'
-				},
-				{
-					id: 3,
-					title: 'Install mouse',
-					content: '',
-					complete: false,
-					type: 'quest',
-					createBy: 'Amir',
-					createdOn: '04/06/2015',
-					timeCompleted: '04/06/2015'
-				}
-			]},
-			{
-			storyId: 3, 
-			title: 'Install desktop',
-			contact: 'Shawn Blakey',
-			tech: 'Che',
-			department: 'CAS',
-			dateModified: '04/06/2015',
-			priority: 1,
-			timeline: [
-			{
-				id: 0,
-				title: 'Get Logitech Mouse',
-				content: '',
-				complete: true,
-				type: 'quest',
-				createBy: 'Amir',
-				createdOn: '04/06/2015',
-				timeCompleted: '04/06/2015'
-			},
-			{
-				id: 1,
-				title: 'Schedule an Appointment',
-				content: '',
-				complete: true,
-				type: 'quest',
-				createBy: 'Amir',
-				createdOn: '04/06/2015',
-				timeCompleted: '04/06/2015'
-			},
-			{
-				id: 2,
-				title: 'Received call from user',
-				content: '',
-				complete: true,
-				type: 'call',
-				createBy: 'Amir',
-				createdOn: '04/06/2015',
-				timeCompleted: '04/06/2015'
-			},
-			{
-				id: 3,
-				title: 'Install mouse',
-				content: '',
-				complete: false,
-				type: 'quest',
-				createBy: 'Amir',
-				createdOn: '04/06/2015',
-				timeCompleted: '04/06/2015'
-			}
-			]},
-		{
-			storyId: 5, 
-			title: 'Remove virus',
-			contact: 'David Chatfield',
-			tech: 'Amir',
-			department: 'Chemistry',
-			dateModified: '04/06/2015',
-			priority: 1,
-					timeline: [
-			{
-				id: 0,
-				title: 'Get Logitech Mouse',
-				content: '',
-				complete: true,
-				type: 'quest',
-				createBy: 'Amir',
-				createdOn: '04/06/2015',
-				timeCompleted: '04/06/2015'
-			},
-			{
-				id: 1,
-				title: 'Schedule an Appointment',
-				content: '',
-				complete: true,
-				type: 'quest',
-				createBy: 'Amir',
-				createdOn: '04/06/2015',
-				timeCompleted: '04/06/2015'
-			},
-			{
-				id: 2,
-				title: 'Received call from user',
-				content: '',
-				complete: true,
-				type: 'call',
-				createBy: 'Amir',
-				createdOn: '04/06/2015',
-				timeCompleted: '04/06/2015'
-			},
-			{
-				id: 3,
-				title: 'Install mouse',
-				content: '',
-				complete: false,
-				type: 'quest',
-				createBy: 'Amir',
-				createdOn: '04/06/2015',
-				timeCompleted: '04/06/2015'
-			}
-			]},
-		{
-			storyId: 22, 
-			title: 'Setup printer',
-			contact: 'Anthony Manzano',
-			tech: 'Amir',
-			department: 'CASTIC',
-			dateModified: '04/06/2015',
-			priority: 2,
-			timeline: [
-			{
-				id: 0,
-				title: 'Get Logitech Mouse',
-				content: '',
-				complete: true,
-				type: 'quest',
-				createBy: 'Amir',
-				createdOn: '04/06/2015',
-				timeCompleted: '04/06/2015'
-			},
-			{
-				id: 1,
-				title: 'Schedule an Appointment',
-				content: '',
-				complete: true,
-				type: 'quest',
-				createBy: 'Amir',
-				createdOn: '04/06/2015',
-				timeCompleted: '04/06/2015'
-			},
-			{
-				id: 2,
-				title: 'Received call from user',
-				content: '',
-				complete: true,
-				type: 'call',
-				createBy: 'Amir',
-				createdOn: '04/06/2015',
-				timeCompleted: '04/06/2015'
-			},
-			{
-				id: 3,
-				title: 'Install mouse',
-				content: '',
-				complete: false,
-				type: 'quest',
-				createBy: 'Amir',
-				createdOn: '04/06/2015',
-				timeCompleted: '04/06/2015'
-			}
-			]
-		}];
+app.service('DataService', ['$http', 'AppConfig', function ($http, AppConfig) {
 
 	var techs = [{name: 'Che'},{name: 'Amir'}, {name: 'Chris'}, {name: 'Jeremy'}];
 
-	var stories = {
-		hero: {
-			name: String,
-			email: String,
-			role: {
-				type: String,
-				enum: ['hero', 'champion']
-			},
-			abilities: [{
-				id: Number,
-				title: String,
-				quests: [{
-					id: Number,
-					title: String,
-					estimatedTime: Number,
-					type: String
-				}]
-			}]
-		},
-		champion: {
-			name: String,
-			email: String,
-			role: {
-				type: String,
-				enum: ['hero', 'champion']
-			},
-			abilities: [{
-				id: Number,
-				title: String,
-				quests: [{
-					id: Number,
-					title: String,
-					estimatedTime: Number,
-					type: String
-				}]
-			}]
-		},
-		contact: [{
-			pid: String,
-			name: String,
-			phone: String,
-			unit: {
-				realm: String,
-				land: String
-			},
-			title: String,
-			location: String,
-			email: String,
-			stories: [Number],
-			assets: [Number]
-		}],
-		unit: {
-			realm: String,
-			land: String
-		},
-		timeLine: [{
-			id: Number,
-			type: [{
-				type: String,
-				enum: [String]
-			}],
-			title: String,
-			content: String,
-			createdBy: String,
-			completedBy: String,
-			timeCreated: Date,
-			details: {
-				estimatedTime: Number,
-				timeCompleted: Date,
-				attachment: String,
-			}
-		}],
-		assets: [Number],
-		timeCreated: Date,
-		tag: [{
-			id: Number,
-			title: String,
-			quests: [{
-				id: Number,
-				title: String,
-				estimatedTime: Number,
-				type: String
-			}]
-		}]
-	};
+	// var apiPath = 'http://localhost:8300';
 
-	var apiPath = 'http://localhost:8300';
+	var loggedIn = false;
 
 	return {
 		getStories: function () {
@@ -461,15 +435,78 @@ app.service('DataService', ['$http', function ($http) {
 		},
 		Quests: {
 			list: function () {
-				return $http.get(apiPath+'/quests');
+				return $http.get(AppConfig.apiPath+'/quests');
 			},
 			add: function (quest) {
 				console.log(quest);
-				return $http.post(apiPath+'/quests/new', quest);
+				return $http.post(AppConfig.apiPath+'/quests/new', quest);
 			},
 			update: function (quest) {
 				console.log(quest);
-				return $http.put(apiPath+'/quests/update', quest);
+				return $http.put(AppConfig.apiPath+'/quests/update', quest);
+			},
+			remove: function (quest) {
+				console.log('deleting quest');
+				return $http.delete(AppConfig.apiPath+'/quests/remove/'+quest._id);
+			}
+		},
+		Stories: {
+			list: function () {
+				return $http.get(AppConfig.apiPath+'/stories');
+			},
+			add: function (story) {
+				return $http.post(AppConfig.apiPath+'/stories/new', story);
+			},
+			update: function (story) {
+				return $http.put(AppConfig.apiPath+'/stories/update', story);
+			},
+			remove: function (story) {
+				return $http.delete(AppConfig.apiPath+'/stories/remove/'+story._id);
+			}
+		},
+		Units: {
+			list: function () {
+				return $http.get(AppConfig.apiPath+'/units');
+			},
+			add: function (unit) {
+				return $http.post(AppConfig.apiPath+'/units/new', unit);
+			},
+			update: function (unit) {
+				return $http.put(AppConfig.apiPath+'/units/update', unit);
+			},
+			remove: function (unit) {
+				return $http.delete(AppConfig.apiPath+'/units/remove/'+unit._id);
+			}
+		},
+		People: {
+			list: function () {
+				return $http.get(AppConfig.apiPath+'/people');
+			},
+			add: function (person) {
+				return $http.post(AppConfig.apiPath+'/people/new', person);
+			},
+			update: function (person) {
+				return $http.put(AppConfig.apiPath+'/people/update', person);
+			},
+			remove: function (person) {
+				return $http.delete(AppConfig.apiPath+'/people/remove/'+person._id);
+			}
+		},
+		Auth: {
+			login: function (user) {
+				return $http.post(AppConfig.apiPath+'/login', user);
+			},
+			logout: function () {
+				return $http.get(AppConfig.apiPath+'/logout');
+			},
+			isLoggedIn: function(user) {
+				if (user) {
+					loggedIn = true;
+				} else {
+					loggedIn = false;
+				}
+				
+				return loggedIn;
 			}
 		}
 	}
@@ -477,7 +514,12 @@ app.service('DataService', ['$http', function ($http) {
 
 app.controller('StoriesCtrl', ['$scope', 'DataService', function($scope, DataService){
 
-	$scope.stories = DataService.getStories();
+	DataService.Stories.list()
+			.success(function (stories) {
+				console.log(stories);
+				$scope.stories = stories;
+			});
+
 	$scope.techs = DataService.getTechs();
 }]);
 
