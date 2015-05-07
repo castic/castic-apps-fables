@@ -118,7 +118,7 @@ app.controller('AppCtrl', ['$scope', '$interval', 'AuthService', '$location', fu
 
 }]);
 
-app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location', '$interval' function ($scope, DataService, AuthService, $location, $interval) {
+app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location', '$interval', function ($scope, DataService, AuthService, $location, $interval) {
 	
 	$scope.quests = [];
 	$scope.stories = [];
