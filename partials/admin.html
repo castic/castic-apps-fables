@@ -331,6 +331,9 @@
 										ng-if="story.contacts[0].email">
 										&nbsp;{{story.contacts[0].email.replace('fiu.edu', 'FIU')}}&nbsp;
 									</span>
+									<span class="fa fa-clock-o text-warning">
+										{{getTotalEstimatedTime(story.timeLine)}}m
+									</span>
 									<span class="pull-right ticket-tech">by {{story.hero.name}}</span>
 								</p>
 								<p class="story-title">
@@ -341,7 +344,15 @@
 									</span>
 								</p>
 							</accordion-heading>
-							<h4 class="text-fantasy">Chapters</h4>
+
+							<h4 class="text-fantasy">Chapters&nbsp;
+									<span class="btn text-success fa fa-phone" ng-click="addChapter('phone')"></span>
+									<span class="btn text-success fa fa-user-plus" ng-click="addChapter('in person')"></span>
+									<span class="btn text-success fa fa-envelope-o" ng-click="addChapter('email')"></span>
+								<span class="pull-right">
+									<span class="btn fa fa-trash" ng-click="removeStory(story)"></span>
+								</span>
+							</h4>
 							<ul class="list-unstyled">
 								<li class="ticket-chapters" ng-repeat="chapter in story.timeLine" ng-init="chapter.showContent = false">
 									<p class="">
@@ -359,7 +370,8 @@
 												class="fa fa-check" 
 												ng-class="{'fa-check': chapter.completedBy != undefined, 'fa-circle-thin': chapter.completedBy == undefined}">
 											</span>
-											{{chapter.title}}
+											{{chapter.title}}&nbsp;&nbsp;
+											<span class="fa fa-clock-o text-warning">&nbsp;{{chapter.details.estimatedTime}}m&nbsp;</span>
 										</span>
 										<button
 											type="button"

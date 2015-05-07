@@ -118,7 +118,7 @@ app.controller('AppCtrl', ['$scope', '$interval', 'AuthService', '$location', fu
 
 }]);
 
-app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location', function ($scope, DataService, AuthService, $location) {
+app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location', '$interval' function ($scope, DataService, AuthService, $location, $interval) {
 	
 	$scope.quests = [];
 	$scope.stories = [];
@@ -269,6 +269,30 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 			.success(function (story) {
 				console.log('saved to db ', story);	
 			});
+	};
+
+	$scope.removeStory = function (story) {
+		DataService.Stories.remove(story)
+			.success(function (message) {
+				$scope.stories.every(function (currentStory ,index) {
+					if (currentStory._id == story._id) {
+						$scope.stories.splice(index, 1);
+						return false;
+					} else return true;
+				});
+			});
+	};
+
+	$scope.getTotalEstimatedTime = function (timeLine) {
+		var totalTime = 0;
+
+		angular.forEach(timeLine, function (chapter) {
+			if (chapter.entryType != 'Questline') {
+				totalTime += chapter.details.estimatedTime;
+			}
+		});
+
+		return totalTime;
 	};
 
 	$scope.completeChapter = function (chapter, story) {
