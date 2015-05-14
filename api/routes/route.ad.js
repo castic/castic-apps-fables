@@ -20,7 +20,7 @@ var config = {
 		]
 	},
 	tlsOptions: {
-		ca: [fs.readFileSync('***REMOVED***-cert.cer')]
+		// ca: [fs.readFileSync('***REMOVED***-cert.cer')]
 	}
 };
 var ad = new activeDirectory(config);
