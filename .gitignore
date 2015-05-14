@@ -1,4 +1,5 @@
 node_modules/*
 *.cer
 *.log
-
+pubilc/uploads/*
+api/routes/route.ad.js
