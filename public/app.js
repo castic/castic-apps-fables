@@ -5,7 +5,8 @@ var app = angular.module('casticApp', [
 	'ngAnimate',
 	'ngSanitize',
 	'ngCookies',
-	'ui.select'
+	'ui.select',
+	'angularFileUpload'
 	]);
 
 app.config(['$routeProvider', '$httpProvider', function ($routeProvider, $httpProvider) {
@@ -118,7 +119,8 @@ app.controller('AppCtrl', ['$scope', '$interval', 'AuthService', '$location', fu
 
 }]);
 
-app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location', '$interval', function ($scope, DataService, AuthService, $location, $interval) {
+app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location', '$interval', 'FileUploader', 
+	function ($scope, DataService, AuthService, $location, $interval, FileUploader) {
 	
 	$scope.quests = [];
 	$scope.stories = [];
@@ -126,6 +128,7 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 	$scope.people = [];
 	$scope.tags = [];
 	$scope.newStory = {};
+	$scope.uploader = new FileUploader({url: 'http://localhost:8300/api/quests/import'});
 
 	// $scope.loggedIn = function () {
 	// 	return AuthService.isLoggedIn();
@@ -135,6 +138,13 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 	// if ( $cookies.session ) {
 	// 	$scope.loggedIn = true;
 	// } else $scope.loggedIn = false;
+
+	$scope.uploader.onSuccessItem = function(item, response, status, headers) {
+		console.log('item: ', item);
+		console.log('Server Response: ',response);
+
+		$scope.uploadedFile = response;
+	};
 
 	getQuests = function () {
 		DataService.Quests.list()
@@ -419,6 +429,16 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 			});
 	};
 
+	// $scope.importQuests = function (files) {
+	// 	var file = FormData();
+
+	// 	console.log(file);
+	// 	DataService.Quest.import(file)
+	// 		.success(function (file) {
+	// 			console.log(file);
+	// 		});
+	// }
+
 	$scope.updateQuest = function (quest) {
 		console.log(quest);
 
@@ -473,6 +493,11 @@ app.service('DataService', ['$http', 'AppConfig', function ($http, AppConfig) {
 				console.log('deleting quest');
 				return $http.delete(AppConfig.apiPath+'/quests/remove/'+quest._id);
 			}
+			// },
+			// import: function (file) {
+			// 	console.log('importing quests');
+			// 	return $http.post(AppConfig.apiPath+'/quests/import/', file);
+			// }
 		},
 		Stories: {
 			list: function () {

@@ -20,7 +20,7 @@ var config = {
 		]
 	},
 	tlsOptions: {
-		ca: [fs.readFileSync('FIU-AD-cert.cer')]
+		// ca: [fs.readFileSync('FIU-AD-cert.cer')]
 	}
 };
 var ad = new activeDirectory(config);
@@ -61,7 +61,7 @@ exports.getUser = function (req, res) {
 
 exports.login = function (req, res) {
 	var fablesUser = {
-		username: 'josephc',	//req.body.username,
+		username: 'sptest',	//req.body.username,
 		pwd: 'sudmuejo20de'+Math.random(10).toString(),	//req.body.password
 	};
 
