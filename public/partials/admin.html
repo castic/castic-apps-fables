@@ -17,6 +17,10 @@
 				<span class="fa fa-user"></span>&nbsp;&nbsp;
 				People
 			</button>
+			<button type="button" class="btn btn-success" ng-click="showUpload=!showUpload">
+				<span class="fa fa-cloud-upload"></span>&nbsp;&nbsp;
+				Import
+			</button>
 <!-- 		<button 
 				type="button" 
 				class="btn btn-warning" 
@@ -52,6 +56,22 @@
 				</button>
 			</form>
 		</div> -->
+		<div ng-show="showUpload"
+			class="animated"
+			ng-class="{fadeOutLeft: !showUpload, fadeInUp: showUpload}"
+			ng-init="showUpload=false">
+			<h2>Import</h2>
+			<input type="file" nv-file-select uploader="uploader"/><br/>
+            <p ng-repeat="item in uploader.queue">
+                <button ng-click="item.upload()" type="button" class="btn btn-success">Import</button>
+                <span ng-bind="item.file.name"></span>
+                <span class="btn btn-link text-danger" ng-click="item.remove()">x</span><br/>
+            </p>
+            <p ng-if="uploadedFile">
+            	<span class="fa fa-file-text-o"></span>&nbsp;
+            	<a href="uploads/{{uploadedFile.uuid}}/file/{{uploadedFile.filename}}">{{uploadedFile.filename}}</a>
+            </p>
+		</div>
 		<div ng-show="showQuests" 
 			class="animated" 
 			ng-class="{fadeOutLeft: !showQuests, fadeInUp: showQuests}" 
