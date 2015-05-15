@@ -128,7 +128,7 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 	$scope.people = [];
 	$scope.tags = [];
 	$scope.newStory = {};
-	$scope.uploader = new FileUploader({url: 'http://localhost:8300/api/quests/import'});
+	$scope.uploader = new FileUploader({url: DataService.uploadPath() });
 
 	// $scope.loggedIn = function () {
 	// 	return AuthService.isLoggedIn();
@@ -143,6 +143,8 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 		// console.log('item: ', item);
 		// console.log('Server Response: ',response);
 		getQuests();
+		$scope.uploader.clearQueue();
+		$scope.showUpload = false;
 	};
 
 	getQuests = function () {
@@ -451,11 +453,9 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 	
 }]);
 
-app.service('DataService', ['$http', 'AppConfig', function ($http, AppConfig) {
+app.service('DataService', ['$http', 'AppConfig', '$location', function ($http, AppConfig, $location) {
 
 	var techs = [{name: 'Che'},{name: 'Amir'}, {name: 'Chris'}, {name: 'Jeremy'}];
-
-	// var apiPath = 'http://localhost:8300';
 
 	var loggedIn = false;
 
@@ -476,6 +476,9 @@ app.service('DataService', ['$http', 'AppConfig', function ($http, AppConfig) {
 		},
 		getTechs: function () {
 			return techs;
+		},
+		uploadPath: function () {
+			return $location.protocol() + '://' + $location.host() + ':' + $location.port() + AppConfig.apiPath + '/quests/import'
 		},
 		Quests: {
 			list: function () {
