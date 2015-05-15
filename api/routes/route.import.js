@@ -14,7 +14,7 @@ exports.setRoute = function (db) {
 importQuest = function (req, res) {
 	var file = req.files.file|| {}
 
-	// console.log(file);
+	console.log(file);
 
 	// Only do import for text/csv file type
 	if (file.mimetype == 'text/csv') {
@@ -33,7 +33,7 @@ importQuest = function (req, res) {
 			});
 		});	
 	} else {
-		res.send('not a csv file');
+		res.send({ message:'not a csv file' });
 	}
 };
 

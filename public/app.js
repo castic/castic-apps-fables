@@ -149,7 +149,7 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 		DataService.Quests.list()
 			.success(function (quests) {
 				$scope.tags = uniq(getTags(quests));
-				// console.log(quests);
+				console.log(quests);
 				$scope.quests = quests;
 				getUnits();
 			});
