@@ -6,8 +6,7 @@ exports.setRoute = function (db) {
 	Quest = db.model('Quest');
 
 	return {
-		quests: importQuest,
-
+		quests: importQuest
 	}
 };
 
