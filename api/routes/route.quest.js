@@ -10,7 +10,7 @@ exports.setRoute = function (db) {
 		removeQuest: removeQuest,
 		purgeQuests: purgeQuests
 	}
-}
+};
 
 list = function (req, res) {
 	Quests.find({})

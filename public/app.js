@@ -140,16 +140,16 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 	// } else $scope.loggedIn = false;
 
 	$scope.uploader.onSuccessItem = function(item, response, status, headers) {
-		console.log('item: ', item);
-		console.log('Server Response: ',response);
-
-		$scope.uploadedFile = response;
+		// console.log('item: ', item);
+		// console.log('Server Response: ',response);
+		getQuests();
 	};
 
 	getQuests = function () {
 		DataService.Quests.list()
 			.success(function (quests) {
 				$scope.tags = uniq(getTags(quests));
+				// console.log(quests);
 				$scope.quests = quests;
 				getUnits();
 			});
@@ -174,7 +174,7 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 	getStories = function () {
 		DataService.Stories.list()
 			.success(function (stories) {
-				console.log(stories);
+				// console.log(stories);
 				$scope.stories = stories;
 				$scope.stories.completeChapter = function (chapter, hero) {
 					return completeChapter(chapter, hero);
