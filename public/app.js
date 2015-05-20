@@ -248,9 +248,14 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 
 		angular.forEach(questArray, function (quest) {
 
+			console.log('Current Quest: ',quest);
+
+			// if no children
 			if (quest.children.length == 0) {
+				// add to timeline
 				timeLine = addQuestToTimeline(quest, timeLine, newStory);
 			} else {
+			// if children 
 				console.log('got children');
 				timeLine = addQuestToTimeline(quest, timeLine, newStory, 'Questline');
 				timeLine = createTimelineEntry(newStory, quest.children, timeLine);
@@ -258,7 +263,6 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 		});
 
 		return timeLine;
-		
 	};
 
 	$scope.saveStory = function (newStory) {
@@ -266,7 +270,7 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 		newStory.timeLine = createTimelineEntry(newStory, newStory.questArray, []);
 		// newStory.unit = newStory.unit.unitId;
 
-		console.log(newStory);
+		console.log('Story: ',newStory);
 		// $scope.stories.push(newStory);
 
 		DataService.Stories.add(newStory)
@@ -299,7 +303,7 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 		var totalTime = 0;
 
 		angular.forEach(timeLine, function (chapter) {
-			if (chapter.entryType != 'Questline') {
+			if ( (chapter.entryType != 'Questline') && (chapter.details) ){
 				totalTime += chapter.details.estimatedTime;
 			}
 		});

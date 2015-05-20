@@ -12,9 +12,20 @@ exports.setRoute = function (db) {
 	}
 };
 
+getSubDoc = function (attr, depth) {
+
+	if ( (!depth) || (depth == 1) ) return attr;
+
+	for (var i = depth - 1; i >= 0; i--) {
+		attr += ' ' + attr + '.' + attr;
+	};
+
+	return attr;
+};
+
 list = function (req, res) {
 	Quests.find({})
-		.populate('children')
+		.deepPopulate( getSubDoc('children', 3) )
 		.exec(function (err, quests) {
 			if (err) {
 				console.log(err);

@@ -20,8 +20,10 @@ importQuest = function (req, res) {
 		
 		//end_parsed will be emitted once parsing finished 
 		getJSON(file.file).on("end_parsed",function(jsonObj){
-		    
-			var json = transformToQuest(jsonObj, '|');
+		    // console.log(jsonObj);
+
+			var json = transformToQuest(jsonObj, ',');
+
 
 			importJSON(Quest, json, function (err, result) {
 				if (err) {
@@ -38,13 +40,19 @@ importQuest = function (req, res) {
 
 transformToQuest = function (ary, delimiter) {
 	ary.forEach(function (item) {
-		if (item.tags) {
-			item.tags = item.tags.split(delimiter);
-		}
-		if (item.children) {
+
+		item.tags = item.tags.split(delimiter);
+		if (item.tags == '') delete item.tags;
+
+		if (item.children.length < 1) {
+			delete item.children;	
+		} else {
 			item.children = item.children.split(delimiter).map(Number);
 		}
+
 	});
+
+	console.log(ary);
 
 	return ary;
 };
