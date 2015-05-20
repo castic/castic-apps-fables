@@ -1,4 +1,5 @@
-var autoIncrement = require('mongoose-auto-increment');
+var autoIncrement = require('mongoose-auto-increment'),
+	deepPopulate = require('mongoose-deep-populate');
 
 exports.initRoutes = function (db) {
 
@@ -15,9 +16,14 @@ exports.initRoutes = function (db) {
 };
 
 registerModel = function (db, modelName) {
+	// get Model
 	var dbSchema = require('./models/'+ modelName.toLowerCase() +'.js').docSchema; 
 	
+	// register plugins
 	dbSchema.plugin(autoIncrement.plugin, modelName);
+	dbSchema.plugin(deepPopulate, {});
+
+	// register Model
 	db.model(modelName, dbSchema);
 
 	return require('./routes/route.'+ modelName.toLowerCase() +'.js').setRoute(db)
