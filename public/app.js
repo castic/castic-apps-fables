@@ -5,6 +5,7 @@ var app = angular.module('casticApp', [
 	'ngAnimate',
 	'ngSanitize',
 	'ngCookies',
+	'ngTouch',
 	'ui.select',
 	'angularFileUpload'
 	]);
@@ -129,6 +130,7 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 	$scope.tags = [];
 	$scope.newStory = {};
 	$scope.uploader = new FileUploader({url: DataService.uploadPath() });
+	var currentChapter;
 
 	// $scope.loggedIn = function () {
 	// 	return AuthService.isLoggedIn();
@@ -138,14 +140,6 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 	// if ( $cookies.session ) {
 	// 	$scope.loggedIn = true;
 	// } else $scope.loggedIn = false;
-
-	$scope.uploader.onSuccessItem = function(item, response, status, headers) {
-		// console.log('item: ', item);
-		// console.log('Server Response: ',response);
-		getQuests();
-		$scope.uploader.clearQueue();
-		$scope.showUpload = false;
-	};
 
 	getQuests = function () {
 		DataService.Quests.list()
@@ -178,25 +172,7 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 			.success(function (stories) {
 				// console.log(stories);
 				$scope.stories = stories;
-				$scope.stories.completeChapter = function (chapter, hero) {
-					return completeChapter(chapter, hero);
-				};
 			});
-	};
-
-	completeChapter = function (chapter, hero) {
-		
-		if (chapter.completedBy) {
-			chapter.completedBy == '';
-			return;
-		}
-
-		chapter.completedBy = hero._id;
-		
-		if (chapter.entryType == 'Quest') {
-			chapter.details.timeCompleted = Date.now;
-		}
-
 	};
 
 	getTags = function (quests) {
@@ -217,10 +193,11 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 	    });
 	};
 
-	getQuests();
-
-	$scope.toJson = function (obj) {
-		return angular.toJson (obj, true);
+	updateStory = function (updatedStory) {
+		DataService.Stories.update(updatedStory)
+			.success(function (story) {
+				console.log('saved to db ', story);	
+			});
 	};
 
 	addQuestToTimeline = function (quest, timeLine, newStory, entryType) {
@@ -280,11 +257,31 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 			});
 	};
 
-	updateStory = function (updatedStory) {
-		DataService.Stories.update(updatedStory)
-			.success(function (story) {
-				console.log('saved to db ', story);	
-			});
+
+	$scope.uploader.onSuccessItem = function(item, response, status, headers) {
+		getQuests();
+		$scope.uploader.clearQueue();
+		$scope.showUpload = false;
+	};
+
+	$scope.toJson = function (obj) {
+		return angular.toJson (obj, true);
+	};
+
+	$scope.getCurrentChapter = function (story) {
+		var currentChapter;
+
+		story.timeLine.every(function (chapter, index) {
+			if ( (chapter.entryType != 'Questline') && chapter.status != 'completed' ) { 
+				story.lastChapter = {
+					title: chapter.title,
+					index: index
+				}
+				return false;
+			} else {
+				return true;
+			}
+		});
 	};
 
 	$scope.removeStory = function (story) {
@@ -312,13 +309,21 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 	};
 
 	$scope.completeChapter = function (chapter, story) {
+
+		if (chapter.showStrikeThrough) {
+			return;
+		}
 		
+		console.log('set the chapter status');
+
 		if (chapter.completedBy) {
 			chapter.completedBy = undefined;
 			chapter.details.timeCompleted = undefined;
 			story.completed = false;
+			chapter.status = 'incomplete';
 		} else {
 			chapter.completedBy = story.hero._id;
+			chapter.status = 'completed';
 			chapter.details.timeCompleted = Date.now();
 
 			story.completed = story.timeLine.every(function (currentChapter, index) {
@@ -328,6 +333,7 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 			});
 		}
 
+		$scope.getCurrentChapter(story);
 		updateStory(story);
 	};
 
@@ -338,7 +344,6 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 
 		updateStory(story);
 	};
-
 
 	$scope.logout = function () {
 		AuthService.logout()
@@ -361,8 +366,6 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 	};
 
 	$scope.savePerson = function (person) {
-		console.log(person);
-
 		DataService.People.add(person)
 			.success(function (person) {
 				console.log('saved to db ', person);	
@@ -371,8 +374,6 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 	};
 
 	$scope.editPerson = function (person) {
-		console.log('before save: ',person);
-
 		DataService.People.update(person)
 			.success(function (person) {
 				console.log('updated: ', person);	
@@ -381,8 +382,6 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 	};
 
 	$scope.saveUnit = function (unit) {
-		console.log(unit);
-
 		DataService.Units.add(unit)
 			.success(function (unit) {
 				console.log('saved to db ', unit);	
@@ -391,8 +390,6 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 	};
 
 	$scope.editUnit = function (unit) {
-		console.log(unit);
-
 		DataService.Units.update(unit)
 			.success(function (unit) {
 				console.log('updated in db ', unit);	
@@ -414,7 +411,6 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 	$scope.removeQuest = function (quest) {
 		DataService.Quests.remove(quest)
 			.success(function (message) {
-				console.log(message);
 
 				$scope.quests.every(function (current, index) {
 					if (current._id == quest._id) {
@@ -426,7 +422,6 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 	};
 
 	$scope.saveQuest = function (quest) {
-		// console.log(quest);
 
 		DataService.Quests.add(quest)
 			.success(function (savedQuest) {
@@ -446,7 +441,6 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 	// }
 
 	$scope.updateQuest = function (quest) {
-		console.log(quest);
 
 		DataService.Quests.update(quest)
 			.success(function (rows) {
@@ -454,7 +448,52 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 				getQuests();
 			});
 	};
-	
+
+	$scope.showChapterButtons = function (chapter) {
+
+		if (currentChapter) {
+			currentChapter.showButtons = false;
+		}
+
+		currentChapter = chapter;
+		currentChapter.showButtons = true;
+	};
+
+	$scope.hideChapterButtons = function (chapter) {
+
+		if (currentChapter) {
+			currentChapter.showButtons = false;
+			currentChapter = undefined;
+		} else {
+			if (!chapter.completedBy) chapter.showStrikeThrough = !chapter.showStrikeThrough;
+		}
+
+	};
+
+
+
+	$scope.addChapter = function (entry, story) {
+		var insertionPoint = story.lastChapter.index - 1;
+		
+		if (insertionPoint >= 0) {
+			story.timeLine.splice(insertionPoint, 0, {
+				id: insertionPoint,
+				entryType: entry.entryType,
+				title: entry.title,
+				content: entry.content,
+				status: 'complete',
+				createdBy: entry.createdBy,
+				completedBy: entry.createdBy,
+				timeCreated: Date.now(),
+				details: {
+					timeCompleted: Date.now()
+				}
+			});
+		}
+	};
+
+	getQuests();
+
 }]);
 
 app.service('DataService', ['$http', 'AppConfig', '$location', function ($http, AppConfig, $location) {

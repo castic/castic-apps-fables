@@ -8,19 +8,38 @@
 }
 
 @media (min-width: 768px) {
-  .sidebar {
-    position: fixed;
-    top: 51px;
-    bottom: 0;
-    left: 0;
-    z-index: 1000;
-    display: block;
-    padding: 20px;
-    overflow-x: hidden;
-    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-    background-color: #444;
-    /*border-right: 1px solid #eee;*/
-  }
+	.sidebar {
+		position: fixed;
+		top: 51px;
+		bottom: 0;
+		left: 0;
+		z-index: 1000;
+		display: block;
+		padding: 20px;
+		overflow-x: hidden;
+		overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+		background-color: #444;
+		/*border-right: 1px solid #eee;*/
+	}
+
+	.main {
+		padding-right: 40px;
+		padding-left: 40px;
+	}
+}
+
+
+@media (max-width: 768px) {
+	.ticket-list {
+		padding-left: 0px;
+		padding-right: 0px;
+	}
+	.ticket-list .fa.visible-xs {
+		display: inline-block !important;
+	}
+	li.ticket-chapters {
+  		border-top: 1px solid;
+	}
 }
 
 /* Sidebar navigation */
@@ -87,10 +106,7 @@
 }
 
 @media (min-width: 768px) {
-	.main {
-		padding-right: 40px;
-		padding-left: 40px;
-	}
+	
 }
 
 .page-header-row {
@@ -208,8 +224,73 @@ span.big {
 }
 
 .ticket-chapters .fa {
-	min-width: 20px;
+	min-width: 25px;
 }
+
+ul.list-unstyled>li>p {
+  margin-bottom: 0px;
+}
+
+li.ticket-chapters {
+  padding: 5px 15px;
+  position: relative;
+  height: 70px;
+}
+
+li.ticket-chapters.show-buttons {
+	margin-left: -205px;
+}
+
+.ticket-chapters.story-questline {
+  display: block;
+  background-color: #626262;
+  min-height: inherit !important;
+  height: inherit;
+}
+
+span.fa.fa-clock-o {
+  font-size: 12px;
+}
+
+.chapter-buttons {
+	transition: right .4s cubic-bezier(0.28, -0.01, 0, 1.01);
+	height: 100%;
+	display: block;
+	position: absolute;
+	right: -170px;
+	margin-top: -5px;
+}
+
+.chapter-buttons.show-button {
+	right: 0px;
+}
+
+ul.story-timeline {
+	overflow-x: hidden;
+	margin: 0px -15px;
+}
+
+.chapter-buttons>button {
+  height: 100%;
+  padding: 15px;
+}
+
+.add-chapter {
+  margin-left: 10px;
+}
+
+.chapter-status {
+	font-size: 40px;
+	margin-top: 0px;
+	position: absolute;
+	left: 20px;
+}
+
+.chapter-text {
+  position: absolute;
+  left: 70px;
+}
+
 a:focus {
 	outline: none;
 	text-decoration: none;
@@ -221,8 +302,12 @@ a.accordion-toggle:hover {
 	color: #fff;
 }
 
+.panel-body {
+	padding-bottom: 0px;
+}
+
 .text-fantasy {
-	font-family: fantasy, cursive;
+	/*font-family: fantasy, cursive;*/
 }
 
 .ticket-chapters .text-left-indent {
@@ -289,6 +374,24 @@ button.dropdown-toggle {
 .story-lead>span {
 	display: inline-block;
 }
+
+.story-left-col {
+	border-right: 1px solid #fff;
+}
+
+.story-center-col {
+	
+}
+
+.story-chapter.ng-binding {
+  border-top: 1px solid #C3C3C3;
+  padding-top: 10px;
+}
+
+.story-right-col {
+	border-left: 1px solid #fff;
+}
+
 /* 
  * Light Style 
  */
