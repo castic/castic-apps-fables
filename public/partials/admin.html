@@ -56,7 +56,7 @@
 				</button>
 			</form>
 		</div> -->
-		<div ng-show="showUpload"
+		<!-- <div ng-show="showUpload"
 			class="animated"
 			ng-class="{fadeOutLeft: !showUpload, fadeInUp: showUpload}"
 			ng-init="showUpload=false">
@@ -71,7 +71,7 @@
             	<span class="fa fa-file-text-o"></span>&nbsp;
             	<a href="uploads/{{uploadedFile.uuid}}/file/{{uploadedFile.fileName}}">{{uploadedFile.fileName}}</a>
             </p>
-		</div>
+		</div> -->
 		<div ng-show="showQuests" 
 			class="animated" 
 			ng-class="{fadeOutLeft: !showQuests, fadeInUp: showQuests}" 
@@ -79,7 +79,7 @@
 			<div class="row">
 				<div class="col-md-4">
 					<h2 ng-init="showNewQuest=false; showUpdateQuestButton=false;">
-						Quests 
+						Quests
 						<button type="button" class="btn btn-primary" ng-click="newQuest={}; showNewQuest=true;">
 							<span class="fa fa-plus"></span>
 						</button>
@@ -251,147 +251,137 @@
 				</form>
 			</div>
 			<div class="row">
-				<div class="col-md-6 hidden" ng-repeat="story in stories">
-					<div class="box">
-						<div class="pull-right">
-							<button 
-								type="button" 
-								class="btn btn-link" 
-								ng-click="$parent.showUpdateStoryButton=true; $parent.newStory=story; $parent.showNewStory=true;">
-								<span class="fa fa-edit text-warning"></span>
-							</button>
-							<button type="button" class="btn btn-link" ng-click="$parent.removeStory(quest)">
-								<span class="fa fa-close text-danger"></span>
-							</button>
-						</div>
-						<span class="lead">
-							<a href="#/stories/view/{{story._id}}" class="text-success">
-								<span>#{{story._id}}</span> 
-							</a>
-							{{story.contacts[0].name}}
-							<span class="text-muted">from {{story.contacts[0].unit.realm}}</span>
-						</span>
-						<span 
-							class="fa fa-map-marker" 
-							ng-if="story.contacts[0].location">
-						</span>
-						&nbsp;{{story.contacts[0].location}}&nbsp;
-						<span 
-							class="fa fa-phone" 
-							ng-if="story.contacts[0].phone">
-						</span>
-						&nbsp;{{story.contacts[0].phone}}&nbsp;	
-						<span 
-							class="fa fa-envelope-o" 
-							ng-if="story.contacts[0].email">
-						</span>
-						&nbsp;{{story.contacts[0].email.replace('fiu.edu', 'FIU')}}&nbsp;
-						<p>{{story.title}}</p>
-						<div>
-							<ul class="list-unstyled">
-								<li 
-									class="ticket-chapters" 
-									ng-repeat="chapter in story.timeLine">
-									<span ng-hide="chapter.entryType != 'Quest'">
-										<span 
-											ng-hide="!chapter.completedBy"
-											class="btn tickets-quest-todo">
-											<span 
-												class="fa"
-												ng-click="$parent.completeChapter(chapter.id)" 
-												ng-class="{'fa-circle-thin': !chapter.completeBy}">
-											</span>
-										</span>
-										<span 
-											class="fa" 
-											ng-hide="!chapter.completeBy"
-											ng-class="{'fa-check': chapter.completeBy}">
-										</span>
-									</span>
-									<span 
-										class="fa text-warning"
-										ng-hide="chapter.entryType == 'Quest'"
-										ng-class="{'fa-envelop-o': chapter.entryType == 'email', 'fa-phone': chapter.entryType == 'call'}">
-									</span>
-									{{chapter.title}}
-								</li>
-							</ul>
-						</div>	
-					</div>
-				</div>
 				<div class="ticket-list col-md-12">
 					<accordion close-others="true">
-						<accordion-group ng-repeat="story in stories" is-open="story.expanded">
+						<accordion-group ng-repeat="story in stories" is-open="story.expanded" ng-init="getCurrentChapter(story)">
 							<accordion-heading>
-								<div class="ticket-priority pull-left">
-									<div ng-class="{'ticket-priority-1': story.priority == '1', 'ticket-priority-2': story.priority == '2', 'ticket-priority-3': story.priority == '3'}">
+								<div class="row">
+									<div class="ticket-priority">
+										<div ng-class="{'ticket-priority-1': story.priority == '1', 'ticket-priority-2': story.priority == '2', 'ticket-priority-3': story.priority == '3'}">
+										</div>
 									</div>
+									<div class="col-xs-2 col-sm-1 text-center story-left-col">
+										<p>
+											<a href="#/stories/view/{{story._id}}" class="text-success">
+												<span>#{{story._id}}</span> 
+											</a>	
+										</p>
+										<p class="fa fa-shield fa-3x"></p>
+										<p>
+											<span class="ticket-tech">{{story.hero.name}}</span>
+										</p>
+									</div>
+									<div class="col-xs-9 col-sm-10 story-center-col">
+										<p>
+											<span class="text-warning">{{story.contacts[0].name}}</span>
+											<span class="text-muted">from {{story.contacts[0].unit.realm}}</span>
+											&nbsp;
+											<span 
+												class="fa fa-phone visible-xs" 
+												ng-if="story.contacts[0].phone">
+												&nbsp;{{story.contacts[0].phone}}&nbsp;	
+											</span>
+											<span 
+												class="fa fa-map-marker visible-xs" 
+												ng-if="story.contacts[0].location">
+												&nbsp;{{story.contacts[0].location}}&nbsp;
+											</span>
+										</p>
+										<p class="hidden-xs">needs</p>
+										<p class="story-title">
+											{{story.title}}
+										</p>
+										<p class="story-chapter">
+											<span class="fa fa-exclamation-circle"></span>&nbsp;{{story.lastChapter.title}}
+										</p>
+									</div>
+									<div class="col-sm-1 hidden-xs story-right-col">
+										<p>
+											<span 
+												class="fa fa-phone" 
+												ng-if="story.contacts[0].phone">
+												&nbsp;{{story.contacts[0].phone}}&nbsp;	
+											</span>
+										</p>
+										<p>
+											<span 
+												class="fa fa-envelope-o" 
+												ng-if="story.contacts[0].email">
+												&nbsp;{{story.contacts[0].email.replace('fiu.edu', 'FIU')}}&nbsp;
+											</span>
+										</p>
+										<p>
+											<span 
+												class="fa fa-map-marker" 
+												ng-if="story.contacts[0].location">
+												&nbsp;{{story.contacts[0].location}}&nbsp;
+											</span>
+										</p>
+									</div>
+									<!-- <p class="story-lead">
+										<span class="lead">
+											<span class="fa" ng-class="{'fa-check': story.completed == true}"></span>
+											
+										</span> 
+										
+										
+										
+										<span class="fa fa-clock-o text-warning">
+											{{getTotalEstimatedTime(story.timeLine)}}m
+										</span> 
+										
+									</p> -->
+									<!-- <p>
+										<span 
+											class="pull-right story-expand fa" 
+											ng-class="{'fa-angle-down': !story.expanded, 'fa-angle-up': story.expanded}">
+										</span>
+									</p> -->
 								</div>
-								<p class="story-lead">
-									<span class="lead">
-										<span class="fa" ng-class="{'fa-check': story.completed == true}"></span>
-										<a href="#/stories/view/{{story.storyId}}" class="text-success">
-											<span>#{{story._id}}</span> 
-										</a>
-										<span class="text-warning">{{story.contacts[0].name}}</span> 
-									</span>
-									<span class="text-muted">from {{story.contacts[0].unit.realm}}</span>
-									<span 
-										class="fa fa-map-marker" 
-										ng-if="story.contacts[0].location">
-										&nbsp;{{story.contacts[0].location}}&nbsp;
-									</span>
-									<span 
-										class="fa fa-phone" 
-										ng-if="story.contacts[0].phone">
-										&nbsp;{{story.contacts[0].phone}}&nbsp;	
-									</span>
-									<span 
-										class="fa fa-envelope-o" 
-										ng-if="story.contacts[0].email">
-										&nbsp;{{story.contacts[0].email.replace('fiu.edu', 'FIU')}}&nbsp;
-									</span>
-									<span class="fa fa-clock-o text-warning">
-										{{getTotalEstimatedTime(story.timeLine)}}m
-									</span>
-									<span class="pull-right ticket-tech">by {{story.hero.name}}</span>
-								</p>
-								<p class="story-title">
-									{{story.title}}
-									<span 
-										class="pull-right story-expand fa" 
-										ng-class="{'fa-angle-down': !story.expanded, 'fa-angle-up': story.expanded}">
-									</span>
-								</p>
 							</accordion-heading>
 
-							<h4 class="text-fantasy">Chapters&nbsp;
-									<span class="btn text-success fa fa-phone" ng-click="addChapter('phone')"></span>
-									<span class="btn text-success fa fa-user-plus" ng-click="addChapter('in person')"></span>
-									<span class="btn text-success fa fa-envelope-o" ng-click="addChapter('email')"></span>
+							<h4 class="text-fantasy">
+								Chapters&nbsp;
+								<span class="btn text-success fa fa-phone add-chapter" ng-click="addChapter('phone', story)">
+								</span>
+								<span class="btn text-success fa fa-comment add-chapter" ng-click="addChapter('in person', story)">
+								</span>
+								<span class="btn text-success fa fa-envelope-o add-chapter" ng-click="addChapter('email', story)"></span>
+								<span class="btn text-success fa fa-edit add-chapter" ng-click="addChapter('email', story)"></span>
 								<span class="pull-right">
 									<span class="btn fa fa-trash" ng-click="removeStory(story)"></span>
 								</span>
 							</h4>
-							<ul class="list-unstyled">
-								<li class="ticket-chapters" ng-repeat="chapter in story.timeLine" ng-init="chapter.showContent = false">
-									<p class="">
+							<ul class="list-unstyled story-timeline">
+								<li class="ticket-chapters" 
+									ng-class="{'story-questline': chapter.entryType == 'Questline'}" 
+									ng-repeat="chapter in story.timeLine" 
+									ng-init="chapter.showContent = false; chapter.showButtons=false; chapter.showStrikeThrough=false"
+									ng-swipe-left="showChapterButtons(chapter)"
+									ng-swipe-right="hideChapterButtons(chapter)">
+									<p class="pull-left">
 										<span ng-hide="chapter.entryType == 'Quest'">
 											<span 
 												class="fa text-warning"
 												ng-class="{'fa-envelop-o': chapter.entryType == 'email', 'fa-phone': chapter.entryType == 'call', 'hidden': chapter.entryType == 'Questline'}">
 											</span>
-											{{chapter.title}}
+											<span class="chapter-title">{{chapter.title}}</span>
 										</span>
 										<span ng-show="chapter.entryType == 'Quest'"
 											ng-click="completeChapter(chapter, story)"
 											class="btn">
 											<span 
-												class="fa fa-check" 
-												ng-class="{'fa-check': chapter.completedBy != undefined, 'fa-circle-thin': chapter.completedBy == undefined}">
+												class="fa fa-check chapter-status" 
+												ng-if="!chapter.showStrikeThrough"
+												ng-class="{'fa-check-circle': chapter.completedBy != undefined, 'fa-circle-thin': chapter.completedBy == undefined, 'text-success': chapter.completedBy != undefined }">
 											</span>
-											{{chapter.title}}&nbsp;&nbsp;
-											<span class="fa fa-clock-o text-warning">&nbsp;{{chapter.details.estimatedTime}}m&nbsp;</span>
+											<span class="fa fa-times-circle chapter-status text-muted" ng-if="chapter.showStrikeThrough"></span>
+											<span class="chapter-text">
+												<span class="chapter-title" ng-if="!chapter.showStrikeThrough">{{chapter.title}}</span>
+												<s ng-if="chapter.showStrikeThrough" class="text-muted">{{chapter.title}}</s>
+												<br>
+												<span class="fa fa-clock-o text-warning">&nbsp;{{chapter.details.estimatedTime}} min&nbsp;</span>
+											</span>
 										</span>
 										<button
 											type="button"
@@ -404,6 +394,14 @@
 									<blockquote class="text-left-indent" ng-show="chapter.showContent">
 										{{chapter.content}}
 									</blockquote>
+									<div ng-if="chapter.entryType != 'Questline'"
+										class="pull-right btn-group chapter-buttons" 
+										ng-class="{'show-button': chapter.showButtons == true}">
+										<button type="button" class="btn btn-warning"><span class="fa fa-pause"></span></button>
+										<button type="button" class="btn btn-info"><span class="fa fa-comment"></span></button>
+										<button type="button" class="btn btn-danger"><span class="fa fa-times"></span></button>
+									</div>
+									<div class="clearfix"></div>
 								</li>
 							</ul>
 						</accordion-group>
@@ -503,6 +501,9 @@
 						</div>
 						<div class="form-group">
 							<input type="text" class="form-control" ng-model="newPerson.mobile" placeholder="Mobile Number">
+						</div>
+						<div class="form-group">
+							<input type="text" class="form-control" ng-model="newPerson.location" placeholder="Location">
 						</div>
 						<div class="form-group">
 							<input type="text" class="form-control" ng-model="newPerson.title" placeholder="Job Title">
