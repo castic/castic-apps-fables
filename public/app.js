@@ -247,10 +247,6 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 	$scope.saveStory = function (newStory) {
 
 		newStory.timeLine = createTimelineEntry(newStory, newStory.questArray, []);
-		// newStory.unit = newStory.unit.unitId;
-
-		console.log('Story: ',newStory);
-		// $scope.stories.push(newStory);
 
 		DataService.Stories.add(newStory)
 			.success(function (story) {
@@ -386,6 +382,18 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 			.success(function (person) {
 				console.log('updated: ', person);	
 				getPeople();
+			});
+	};
+
+	$scope.removePerson = function (person) {
+		DataService.People.remove(person)
+			.success(function (message) {
+				$scope.people.every(function (currentPerson ,index) {
+					if (currentPerson._id == person._id) {
+						$scope.people.splice(index, 1);
+						return false;
+					} else return true
+				});
 			});
 	};
 

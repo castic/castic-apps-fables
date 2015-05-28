@@ -76,7 +76,7 @@ updatePerson = function (req, res) {
 };
 
 removePerson = function (req, res) {
-	Persons.findOne({_id: req.params.personId}).remove(function (err, message) {
+	People.findOne({_id: req.params.personId}).remove(function (err, message) {
 		if (err) {
 			res.send('nothing to delete');
 		}
