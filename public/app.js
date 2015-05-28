@@ -131,6 +131,7 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 	$scope.newStory = {};
 	$scope.uploader = new FileUploader({url: DataService.uploadPath() });
 	var currentChapter;
+	$scope.roles = ['hero','champion','contact','vendor'];
 
 	// $scope.loggedIn = function () {
 	// 	return AuthService.isLoggedIn();
@@ -145,7 +146,7 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 		DataService.Quests.list()
 			.success(function (quests) {
 				$scope.tags = uniq(getTags(quests));
-				console.log(quests);
+				// console.log(quests);
 				$scope.quests = quests;
 				getUnits();
 			});
@@ -163,6 +164,7 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 		DataService.People.list()
 			.success(function (people) {
 				$scope.people = people;
+				console.log('People from db: ',people);
 				getStories();
 			});	
 		};
@@ -333,6 +335,8 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 			});
 		}
 
+		console.log('The current status is: ', chapter.status)
+
 		$scope.getCurrentChapter(story);
 		updateStory(story);
 	};
@@ -366,6 +370,7 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 	};
 
 	$scope.savePerson = function (person) {
+
 		DataService.People.add(person)
 			.success(function (person) {
 				console.log('saved to db ', person);	
@@ -374,6 +379,9 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 	};
 
 	$scope.editPerson = function (person) {
+
+		console.log('saving person: ', person);
+
 		DataService.People.update(person)
 			.success(function (person) {
 				console.log('updated: ', person);	
@@ -459,18 +467,27 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 		currentChapter.showButtons = true;
 	};
 
-	$scope.hideChapterButtons = function (chapter) {
+	$scope.hideChapterButtons = function (chapter, story) {
+		
+		console.log('The current status before right-swipe: ', chapter.status);
 
 		if (currentChapter) {
 			currentChapter.showButtons = false;
 			currentChapter = undefined;
 		} else {
-			if (!chapter.completedBy) chapter.showStrikeThrough = !chapter.showStrikeThrough;
+			if (!chapter.completedBy) {
+				chapter.showStrikeThrough = !chapter.showStrikeThrough;
+				chapter.status = (chapter.showStrikeThrough) ? 'removed' : 'incomplete';
+
+				console.log('The current status after right-swipe: ', chapter.status);
+
+				$scope.getCurrentChapter(story);
+				updateStory(story);
+			}
 		}
 
+			
 	};
-
-
 
 	$scope.addChapter = function (entry, story) {
 		var insertionPoint = story.lastChapter.index - 1;

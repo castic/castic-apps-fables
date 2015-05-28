@@ -1,43 +1,56 @@
 <div class="row">
-	<div class="col-md-12">
-		<div class="row">
+	<div class="btn-group-justified btn-group admin-nav">
+		<div class="btn-group" role="group">
 			<button type="button" class="btn btn-success" ng-click="showQuests=!showQuests">
 				<span class="fa fa-leaf"></span>&nbsp;&nbsp;
 				Quests
 			</button>
+		</div>
+		<div class="btn-group" role="group">
 			<button type="button" class="btn btn-success" ng-click="showStories=!showStories">
 				<span class="fa fa-leanpub"></span>&nbsp;&nbsp;
 				Stories
 			</button>
+		</div>
+		<div class="btn-group" role="group">
 			<button type="button" class="btn btn-success" ng-click="showUnits=!showUnits">
 				<span class="fa fa-users"></span>&nbsp;&nbsp;
 				Units
 			</button>
+		</div>
+	</div>
+	<div class="btn-group-justified btn-group">
+		<div class="btn-group" role="group">
 			<button type="button" class="btn btn-success" ng-click="showPeople=!showPeople">
 				<span class="fa fa-user"></span>&nbsp;&nbsp;
 				People
 			</button>
+		</div>
+		<div class="btn-group" role="group">
 			<button type="button" class="btn btn-success" ng-click="showUpload=!showUpload">
 				<span class="fa fa-cloud-upload"></span>&nbsp;&nbsp;
 				Import
 			</button>
-<!-- 		<button 
-				type="button" 
-				class="btn btn-warning" 
-				ng-hide="loggedIn()" 
-				ng-click="showLogin=!showLogin">
-				<span class="fa fa-lock"></span>&nbsp;&nbsp;
-				Login
-			</button> -->
-			<!-- <button 
-				type="button" 
-				class="btn btn-success" 
-				ng-show="loggedIn()" 
-				ng-click="logout(); showLogin=true;">
-				<span class="fa fa-check"></span>&nbsp;&nbsp;
-				Logout
-			</button> -->
 		</div>
+	</div>
+<!-- <button 
+		type="button" 
+		class="btn btn-warning" 
+		ng-hide="loggedIn()" 
+		ng-click="showLogin=!showLogin">
+		<span class="fa fa-lock"></span>&nbsp;&nbsp;
+		Login
+	</button> -->
+	<!-- <button 
+		type="button" 
+		class="btn btn-success" 
+		ng-show="loggedIn()" 
+		ng-click="logout(); showLogin=true;">
+		<span class="fa fa-check"></span>&nbsp;&nbsp;
+		Logout
+	</button> -->
+	<div class="col-md-12">
+		
 		<!-- <div ng-show="showLogin"
 			class="animated" 
 			ng-class="{fadeOutLeft: !showLogin, fadeInUp: showLogin}">
@@ -358,7 +371,7 @@
 									ng-repeat="chapter in story.timeLine" 
 									ng-init="chapter.showContent = false; chapter.showButtons=false; chapter.showStrikeThrough=false"
 									ng-swipe-left="showChapterButtons(chapter)"
-									ng-swipe-right="hideChapterButtons(chapter)">
+									ng-swipe-right="hideChapterButtons(chapter, story)">
 									<p class="pull-left">
 										<span ng-hide="chapter.entryType == 'Quest'">
 											<span 
@@ -371,14 +384,15 @@
 											ng-click="completeChapter(chapter, story)"
 											class="btn">
 											<span 
-												class="fa fa-check chapter-status" 
-												ng-if="!chapter.showStrikeThrough"
+												class="fa chapter-status" 
+												ng-if="chapter.status != 'removed'"
 												ng-class="{'fa-check-circle': chapter.completedBy != undefined, 'fa-circle-thin': chapter.completedBy == undefined, 'text-success': chapter.completedBy != undefined }">
+
 											</span>
-											<span class="fa fa-times-circle chapter-status text-muted" ng-if="chapter.showStrikeThrough"></span>
+											<span class="fa fa-times-circle chapter-status text-muted" ng-if="chapter.status == 'removed'"></span>
 											<span class="chapter-text">
-												<span class="chapter-title" ng-if="!chapter.showStrikeThrough">{{chapter.title}}</span>
-												<s ng-if="chapter.showStrikeThrough" class="text-muted">{{chapter.title}}</s>
+												<span class="chapter-title" ng-if="chapter.status != 'removed'">{{chapter.title}}</span>
+												<s ng-if="chapter.status == 'removed'" class="text-muted">{{chapter.title}}</s>
 												<br>
 												<span class="fa fa-clock-o text-warning">&nbsp;{{chapter.details.estimatedTime}} min&nbsp;</span>
 											</span>
@@ -478,13 +492,8 @@
 					</h2>
 					<form class="form" ng-show="showNewPerson">
 						<div class="form-group">
-							<select class="form-control">
-								<option 
-									ng=model="newPerson.role"
-									ng-repeat="role in ['champion','hero','contact','vendor']"
-									value="{{role}}">
-									{{role}}
-								</option>
+
+							<select class="form-control" ng-options="role for role in roles" ng-model="newPerson.role">
 							</select>
 						</div>
 						<div class="form-group">

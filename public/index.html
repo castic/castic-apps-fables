@@ -10,7 +10,11 @@
 	<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.css">
 	<link rel="stylesheet" type="text/css" href="css/styles.css">
 </head>
-<body ng-controller="AppCtrl" ng-class="{'light': currentTheme == 'light'}" ng-init="currentTheme = ''">
+<body 
+	ng-controller="AppCtrl" 
+	class="light" 
+	ng-class="{'light': currentTheme == 'light'}"
+	ng-init="currentTheme = ''">
 
 	<nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
