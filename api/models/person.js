@@ -11,6 +11,7 @@ var personSchema = new Schema({
 		title: String,
 		location: String,
 		role: String,
+		status: {type: String, default: 'Active'}, 
 		abilities:[String],
 		stories: [{type: Number, ref: 'Story'}],
 		assets: [{type: Number, ref: 'Asset'}]

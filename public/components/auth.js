@@ -1,4 +1,4 @@
-var app = angular.module('casticApp');
+var app = angular.module('fablesApp');
 
 app.service('AuthService', ['$http', 'AppConfig', '$rootScope', function ($http, AppConfig, $rootScope) {
 	var loggedIn = false;
