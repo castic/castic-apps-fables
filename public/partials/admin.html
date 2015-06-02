@@ -191,12 +191,24 @@
 					</button>
 				</h2>
 				<form class="col-sm-4" ng-show="showNewStory">
-					<div class="form-group">
+					<!-- <div class="form-group">
 						<input 
 							type="text" 
 							class="form-control input-sm" 
 							ng-model="newStory.title" 
 							placeholder="Title">
+					</div> -->
+					<div class="form-group">
+						<ui-select 
+							multiple 
+							ng-model="newStory.questArray" 
+							theme="select2" 
+							style="width: 100%">
+							<ui-select-match placeholder="Select quests...">{{$item.title}}</ui-select-match>
+							<ui-select-choices repeat="quest in quests | propsFilter: {title: $select.search, tags: $select.search}">
+								<span ng-bind-html="quest.title | highlight: $select.search"></span>
+							</ui-select-choices>
+						</ui-select>
 					</div>
 					<div class="form-group">
 						<ui-select 
@@ -227,7 +239,7 @@
 							theme="select2" 
 							style="width: 100%">
 							<ui-select-match placeholder="Select contacts...">{{$item.name}}</ui-select-match>
-							<ui-select-choices repeat="person._id as person in people | propsFilter: {name: $select.search, role: $select.search}">
+							<ui-select-choices repeat="person._id as person in people | propsFilter: {name: $select.search, role: $select.search} | filter: {status: 'Active'}">
 								<div ng-bind-html="person.name | highlight: $select.search"></div>
 								<small>
 									role: {{person.unit.realm}}
@@ -247,18 +259,6 @@
 							</ui-select-choices>
 						</ui-select>
 					</div>
-					<div class="form-group">
-						<ui-select 
-							multiple 
-							ng-model="newStory.questArray" 
-							theme="select2" 
-							style="width: 100%">
-							<ui-select-match placeholder="Select quests...">{{$item.title}}</ui-select-match>
-							<ui-select-choices repeat="quest in quests | propsFilter: {title: $select.search, tags: $select.search}">
-								<span ng-bind-html="quest.title | highlight: $select.search"></span>
-							</ui-select-choices>
-						</ui-select>
-					</div>
 					<button type="button" class="btn btn-default btn-block" ng-click="showNewStory=false; saveStory(newStory)">Add</button>
 					<button type="button" class="btn btn-danger btn-block" ng-click="showNewStory=false;">Cancel</button>
 				</form>
@@ -273,7 +273,7 @@
 										<div ng-class="{'ticket-priority-1': story.priority == '1', 'ticket-priority-2': story.priority == '2', 'ticket-priority-3': story.priority == '3'}">
 										</div>
 									</div>
-									<div class="col-xs-2 col-sm-1 text-center story-left-col">
+									<div class="col-sm-1 text-center hidden-xs story-left-col">
 										<p>
 											<a href="#/stories/view/{{story._id}}" class="text-success">
 												<span>#{{story._id}}</span> 
@@ -284,28 +284,32 @@
 											<span class="ticket-tech">{{story.hero.name}}</span>
 										</p>
 									</div>
-									<div class="col-xs-9 col-sm-10 story-center-col">
-										<p>
-											<span class="text-warning">{{story.contacts[0].name}}</span>
+									<div class="col-xs-12 col-sm-10 story-center-col">
+										<p class="story-contact-info">
+											<span class="text-warning story-contact">{{story.contacts[0].name}}</span>
+											<span class="fa story-priority" ng-class="{'fa-certificate': story.priority == '1'}"></span>
+											<br>
 											<span class="text-muted">from {{story.contacts[0].unit.realm}}</span>
 											&nbsp;
 											<span 
-												class="fa fa-phone visible-xs" 
+												class="fa fa-phone visible-xs text-muted" 
 												ng-if="story.contacts[0].phone">
-												&nbsp;{{story.contacts[0].phone}}&nbsp;	
+												&nbsp;{{story.contacts[0].phone}}	
 											</span>
+											&nbsp;
 											<span 
-												class="fa fa-map-marker visible-xs" 
+												class="fa fa-map-marker visible-xs text-muted" 
 												ng-if="story.contacts[0].location">
-												&nbsp;{{story.contacts[0].location}}&nbsp;
+												&nbsp;{{story.contacts[0].location}}
 											</span>
 										</p>
 										<p class="hidden-xs">needs</p>
-										<p class="story-title">
+										<p class="story-title ng-binding fa fa-leanpub">
 											{{story.title}}
 										</p>
 										<p class="story-chapter">
-											<span class="fa fa-exclamation-circle"></span>&nbsp;{{story.lastChapter.title}}
+											<span class="fa fa-exclamation-circle">&nbsp;{{story.lastChapter.title}}</span>
+											<span class="pull-right hidden story-expanded" ng-class="{'story-collapsed': story.expanded}">›</span>
 										</p>
 									</div>
 									<div class="col-sm-1 hidden-xs story-right-col">
@@ -353,61 +357,120 @@
 								</div>
 							</accordion-heading>
 
-							<h4 class="text-fantasy">
-								Chapters&nbsp;
-								<span class="btn text-success fa fa-phone add-chapter" ng-click="addChapter('phone', story)">
+							<h4 class="chapter-menu">
+								<!-- Chapters&nbsp; -->
+								<span class="btn fa fa-phone add-chapter" ng-click="addEntry('call', story)">
 								</span>
-								<span class="btn text-success fa fa-comment add-chapter" ng-click="addChapter('in person', story)">
+								<span class="btn fa fa-comment add-chapter" ng-click="addEntry('face2face', story)">
 								</span>
-								<span class="btn text-success fa fa-envelope-o add-chapter" ng-click="addChapter('email', story)"></span>
-								<span class="btn text-success fa fa-edit add-chapter" ng-click="addChapter('email', story)"></span>
+								<span class="btn fa fa-envelope-o add-chapter" ng-click="addEntry('email', story)"></span>
+								<!-- <span class="btn text-success fa fa-edit add-chapter" ng-click="addEntry('note', story)"></span> -->
 								<span class="pull-right">
 									<span class="btn fa fa-trash" ng-click="removeStory(story)"></span>
 								</span>
 							</h4>
+							<form class="col-sm-4" ng-show="showNewChapter">
+								<div class="form-group">
+									<input type="text" class="form-control" ng-model="story.newChapter.title" placeholder="Subject">
+								</div>
+								<div class="form-group">
+									<textarea class="form-control" ng-model="story.newChapter.content" placeholder="Contents">
+									</textarea>
+								</div>
+								<button 
+									type="button" 
+									class="btn btn-default btn-block" 
+									ng-click="addChapter(story)">Add</button>
+								<button 
+									type="button" 
+									class="btn btn-danger btn-block" 
+									ng-click="cancelEntry(story)">Cancel</button>
+									<br>
+									<br>
+							</form>
 							<ul class="list-unstyled story-timeline">
 								<li class="ticket-chapters" 
 									ng-class="{'story-questline': chapter.entryType == 'Questline'}" 
 									ng-repeat="chapter in story.timeLine" 
 									ng-init="chapter.showContent = false; chapter.showButtons=false; chapter.showStrikeThrough=false"
+									ng-click="selectChapter(chapter, story)"
 									ng-swipe-left="showChapterButtons(chapter)"
 									ng-swipe-right="hideChapterButtons(chapter, story)">
-									<p class="pull-left">
-										<span ng-hide="chapter.entryType == 'Quest'">
+									<div class="pull-left ">
+										<div>
 											<span 
-												class="fa text-warning"
-												ng-class="{'fa-envelop-o': chapter.entryType == 'email', 'fa-phone': chapter.entryType == 'call', 'hidden': chapter.entryType == 'Questline'}">
+												ng-if="chapter.entryType != 'Quest'"
+												class="fa text-warning chapter-status"
+												ng-class="{'fa-envelope-o': chapter.entryType == 'email', 'fa-phone': chapter.entryType == 'call', 'fa-comment': chapter.entryType == 'face2face', 'hidden': chapter.entryType == 'Questline'}">
 											</span>
-											<span class="chapter-title">{{chapter.title}}</span>
-										</span>
-										<span ng-show="chapter.entryType == 'Quest'"
-											ng-click="completeChapter(chapter, story)"
+											<span 
+												ng-if="chapter.entryType == 'Quest'"
+												class="fa chapter-status" 
+												ng-if="chapter.status != 'removed'"
+												ng-class="{'fa-check-circle': chapter.completedBy != undefined, 'fa-circle-thin': chapter.completedBy == undefined, 'text-success': chapter.completedBy != undefined }">
+											</span>
+											<span 
+												class="fa fa-times-circle chapter-status text-muted" 
+												ng-if="chapter.status == 'removed' && chapter.entryType == 'Quest'">
+											</span>
+											<!-- <span class="chapter-text">
+												<span class="chapter-title">
+													{{chapter.title}}
+												</span>
+											</span> -->
+											<span class="chapter-text" ng-class="{'text-muted': chapter.status == 'removed'}">
+												<span class="chapter-title" ng-if="chapter.status != 'removed'">{{chapter.title}}</span>
+												<s ng-if="chapter.status == 'removed'" >{{chapter.title}}</s>
+												<br>
+												<span class="fa fa-clock-o text-warning" ng-if="chapter.entryType == 'Quest'">
+													&nbsp;{{chapter.details.estimatedTime}} min&nbsp;
+												</span>
+											</span>
+										</div>
+										<!-- {{chapter.showContent}} -->
+										<!-- <div 
+											class="chapter-content"
+											ng-class="{'shown': chapter.showContent == 'false'}">
+											<blockquote>
+												{{chapter.content}}
+											</blockquote>	
+										</div> -->
+										
+<!-- 										<div 
+											ng-hide="chapter.entryType == 'Quest'"
+											class="btn"> 
+											<span 
+												class="fa text-warning chapter-status"
+												ng-class="{'fa-envelope-o': chapter.entryType == 'email', 'fa-phone': chapter.entryType == 'call', 'fa-comment': chapter.entryType == 'face2face', 'hidden': chapter.entryType == 'Questline'}">
+											</span>
+											<span class="chapter-text">
+												<span class="chapter-title">
+													{{chapter.title}}
+												</span>
+											</span>
+										</div>
+										<div 
+											ng-show="chapter.entryType == 'Quest'"
 											class="btn">
 											<span 
 												class="fa chapter-status" 
 												ng-if="chapter.status != 'removed'"
 												ng-class="{'fa-check-circle': chapter.completedBy != undefined, 'fa-circle-thin': chapter.completedBy == undefined, 'text-success': chapter.completedBy != undefined }">
-
 											</span>
 											<span class="fa fa-times-circle chapter-status text-muted" ng-if="chapter.status == 'removed'"></span>
-											<span class="chapter-text">
+											<span class="chapter-text" ng-class="{'text-muted': chapter.status == 'removed'}">
 												<span class="chapter-title" ng-if="chapter.status != 'removed'">{{chapter.title}}</span>
-												<s ng-if="chapter.status == 'removed'" class="text-muted">{{chapter.title}}</s>
+												<s ng-if="chapter.status == 'removed'" >{{chapter.title}}</s>
 												<br>
 												<span class="fa fa-clock-o text-warning">&nbsp;{{chapter.details.estimatedTime}} min&nbsp;</span>
 											</span>
-										</span>
-										<button
-											type="button"
-											ng-click="chapter.showContent = !chapter.showContent"
-											class="btn btn-link"
-											ng-show="chapter.content.length > 0">
-											<span class="fa" ng-class="{'fa-angle-up': chapter.showContent, 'fa-angle-down': !chapter.showContent}"></span>
-										</button>
-									</p>
-									<blockquote class="text-left-indent" ng-show="chapter.showContent">
-										{{chapter.content}}
-									</blockquote>
+										</div>
+										<blockquote 
+											class="chapter-content" 
+											ng-show="chapter.showContent">
+											{{chapter.content}}
+										</blockquote> -->
+									</div>
 									<div ng-if="chapter.entryType != 'Questline'"
 										class="pull-right btn-group chapter-buttons" 
 										ng-class="{'show-button': chapter.showButtons == true}">
@@ -492,7 +555,6 @@
 					</h2>
 					<form class="form" ng-show="showNewPerson">
 						<div class="form-group">
-
 							<select class="form-control" ng-options="role for role in roles" ng-model="newPerson.role">
 							</select>
 						</div>
@@ -516,6 +578,9 @@
 						</div>
 						<div class="form-group">
 							<input type="text" class="form-control" ng-model="newPerson.title" placeholder="Job Title">
+						</div>
+						<div class="form-group">
+							<input type="text" class="form-control" ng-model="newPerson.status" placeholder="Status">
 						</div>
 						<div class="form-group">
 							<ui-select 
@@ -545,6 +610,7 @@
 					<button 
 						type="button"
 						class="btn btn-link"
+						ng-if="person.status == 'Active'"
 						ng-click="removePerson(person)">
 						<span class="fa fa-close text-danger"></span>
 					</button>

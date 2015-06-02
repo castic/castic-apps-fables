@@ -36,7 +36,8 @@ addPerson = function (req, res) {
 			unit: req.body.unit,
 			title: req.body.title,
 			location: req.body.location,
-			role: req.body.role
+			role: req.body.role,
+			status: 'Active'
 			// abilities:[{type: Number, ref: 'Tag'}],
 			// stories: [{type: Number, ref: 'Story'}],
 			// assets: [{type: Number, ref: 'Asset'}]
@@ -64,7 +65,8 @@ updatePerson = function (req, res) {
 					unit: req.body.unit,
 					title: req.body.title,
 					location: req.body.location,
-					role: req.body.role
+					role: req.body.role,
+					status: req.body.status
 				}
 			}, function	(err, rows, dbResponse) {
 				res.send(rows);				

@@ -1,4 +1,4 @@
-var app = angular.module('casticApp', [
+var app = angular.module('fablesApp', [
 	'ngRoute', 
 	'ui.bootstrap.accordion', 
 	'ui.bootstrap.dropdown',
@@ -15,12 +15,16 @@ app.config(['$routeProvider', '$httpProvider', function ($routeProvider, $httpPr
     $httpProvider.defaults.withCredentials = true;
 
     $routeProvider.
-        when('/', {
+    	when('/', {
+            templateUrl: 'partials/landing.html',
+            controller: 'AppCtrl'
+        }).
+        when('/dash', {
             templateUrl: 'partials/dashboard.html',
             controller: 'AppCtrl'
         }).
         when('/stories', {
-            templateUrl: 'partials/stories.html',
+            templateUrl: 'components/stories/stories.html',
             controller: 'StoriesCtrl'
         }).
         when('/stories/view/:storyId', {
@@ -227,15 +231,13 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 
 		angular.forEach(questArray, function (quest) {
 
-			console.log('Current Quest: ',quest);
-
 			// if no children
 			if (quest.children.length == 0) {
 				// add to timeline
 				timeLine = addQuestToTimeline(quest, timeLine, newStory);
 			} else {
 			// if children 
-				console.log('got children');
+				// console.log('got children');
 				timeLine = addQuestToTimeline(quest, timeLine, newStory, 'Questline');
 				timeLine = createTimelineEntry(newStory, quest.children, timeLine);
 			}
@@ -244,9 +246,45 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 		return timeLine;
 	};
 
+	showChapterContent = function (chapter) {
+		chapter.showContent = !chapter.showContent
+	};
+
+	completeChapter = function (chapter, story) {
+
+		if (chapter.showStrikeThrough) {
+			return;
+		}
+		
+		console.log('set the chapter status');
+
+		if (chapter.completedBy) {
+			chapter.completedBy = undefined;
+			chapter.details.timeCompleted = undefined;
+			story.completed = false;
+			chapter.status = 'incomplete';
+		} else {
+			chapter.completedBy = story.hero._id;
+			chapter.status = 'completed';
+			chapter.details.timeCompleted = Date.now();
+
+			story.completed = story.timeLine.every(function (currentChapter, index) {
+				if (currentChapter.completedBy) {
+					return true;
+				} else return false;
+			});
+		}
+
+		console.log('The current status is: ', chapter.status)
+
+		$scope.getCurrentChapter(story);
+		updateStory(story);
+	};
+
 	$scope.saveStory = function (newStory) {
 
 		newStory.timeLine = createTimelineEntry(newStory, newStory.questArray, []);
+		newStory.title = newStory.timeLine[0].title;
 
 		DataService.Stories.add(newStory)
 			.success(function (story) {
@@ -306,37 +344,6 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 		return totalTime;
 	};
 
-	$scope.completeChapter = function (chapter, story) {
-
-		if (chapter.showStrikeThrough) {
-			return;
-		}
-		
-		console.log('set the chapter status');
-
-		if (chapter.completedBy) {
-			chapter.completedBy = undefined;
-			chapter.details.timeCompleted = undefined;
-			story.completed = false;
-			chapter.status = 'incomplete';
-		} else {
-			chapter.completedBy = story.hero._id;
-			chapter.status = 'completed';
-			chapter.details.timeCompleted = Date.now();
-
-			story.completed = story.timeLine.every(function (currentChapter, index) {
-				if (currentChapter.completedBy) {
-					return true;
-				} else return false;
-			});
-		}
-
-		console.log('The current status is: ', chapter.status)
-
-		$scope.getCurrentChapter(story);
-		updateStory(story);
-	};
-
 	$scope.reopenChapter = function (chapter, story) {
 		chapter.completedBy = undefined;
 		chapter.details.timeCompleted = undefined;
@@ -376,7 +383,7 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 
 	$scope.editPerson = function (person) {
 
-		console.log('saving person: ', person);
+		// console.log('saving person: ', person);
 
 		DataService.People.update(person)
 			.success(function (person) {
@@ -386,14 +393,12 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 	};
 
 	$scope.removePerson = function (person) {
-		DataService.People.remove(person)
-			.success(function (message) {
-				$scope.people.every(function (currentPerson ,index) {
-					if (currentPerson._id == person._id) {
-						$scope.people.splice(index, 1);
-						return false;
-					} else return true
-				});
+		person.status = 'Inactive';
+
+		DataService.People.update(person)
+			.success(function (person) {
+				console.log('updated: ', person);	
+				getPeople();
 			});
 	};
 
@@ -467,6 +472,8 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 
 	$scope.showChapterButtons = function (chapter) {
 
+		if (chapter.showContent || (chapter.entryType == 'Questline') )return;
+
 		if (currentChapter) {
 			currentChapter.showButtons = false;
 		}
@@ -477,6 +484,8 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 
 	$scope.hideChapterButtons = function (chapter, story) {
 		
+		if (chapter.showContent || (chapter.entryType == 'Questline') )return;
+
 		console.log('The current status before right-swipe: ', chapter.status);
 
 		if (currentChapter) {
@@ -493,28 +502,56 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 				updateStory(story);
 			}
 		}
-
-			
 	};
 
-	$scope.addChapter = function (entry, story) {
-		var insertionPoint = story.lastChapter.index - 1;
+	$scope.selectChapter = function (chapter, story) {
 		
-		if (insertionPoint >= 0) {
-			story.timeLine.splice(insertionPoint, 0, {
-				id: insertionPoint,
-				entryType: entry.entryType,
-				title: entry.title,
-				content: entry.content,
-				status: 'complete',
-				createdBy: entry.createdBy,
-				completedBy: entry.createdBy,
-				timeCreated: Date.now(),
-				details: {
-					timeCompleted: Date.now()
-				}
-			});
+		if (chapter.entryType == 'Questline') return;
+
+		if (chapter.entryType == 'Quest') {
+			completeChapter(chapter, story);
+		} else {
+			showChapterContent(chapter);
 		}
+	};
+
+	$scope.addEntry = function (entryType, story) {
+
+		story.newChapter = {};
+
+		story.newChapter.entryType = entryType;
+		story.newChapter.createdBy = story.hero._id;
+		story.newChapter.timeCreated = Date.now();
+
+		$scope.showNewChapter = true;
+	};
+
+	$scope.cancelEntry = function (story) {
+		story.newChapter = {};
+		$scope.showNewChapter = false;
+		// console.log('canceling entry: ',$scope.showNewChapter);
+	}
+
+	$scope.addChapter = function (story) {
+		story.newChapter.insertionPoint = (story.lastChapter.index > 0) ? story.lastChapter.index : 0;
+		
+		story.timeLine.splice(story.newChapter.insertionPoint, 0, {
+			entryType: story.newChapter.entryType,
+			title: story.newChapter.title,
+			content: story.newChapter.content,
+			status: 'completed',
+			createdBy: story.newChapter.createdBy,
+			completedBy: story.newChapter.createdBy,
+			timeCreated: story.newChapter.timeCreated,
+			details: {
+				timeCompleted: Date.now()
+			}
+		});
+
+		$scope.showNewChapter = false;
+
+		console.log(story.timeLine);
+		// updateStory(story);
 	};
 
 	getQuests();
@@ -607,10 +644,12 @@ app.service('DataService', ['$http', 'AppConfig', '$location', function ($http, 
 			},
 			update: function (person) {
 				return $http.put(AppConfig.apiPath+'/people/update', person);
-			},
-			remove: function (person) {
-				return $http.delete(AppConfig.apiPath+'/people/remove/'+person._id);
 			}
+			// Not used. We will set the status to 'Inactive' instead.
+			// ,
+			// remove: function (person) {
+			// 	return $http.delete(AppConfig.apiPath+'/people/remove/'+person._id);
+			// }
 		},
 		Auth: {
 			login: function (user) {
@@ -632,16 +671,7 @@ app.service('DataService', ['$http', 'AppConfig', '$location', function ($http, 
 	}
 }]);
 
-app.controller('StoriesCtrl', ['$scope', 'DataService', function($scope, DataService){
 
-	DataService.Stories.list()
-			.success(function (stories) {
-				console.log(stories);
-				$scope.stories = stories;
-			});
-
-	$scope.techs = DataService.getTechs();
-}]);
 
 app.controller('StoryCtrl', ['$scope', '$routeParams', 'DataService', function($scope, $routeParams, DataService){
 	$scope.story = DataService.getStory($routeParams.storyId);

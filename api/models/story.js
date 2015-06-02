@@ -3,7 +3,7 @@ var mongoose = require('mongoose'),
 
 var storySchema = new Schema({
 		title: String,
-		priority: {type: String, default: '1'},
+		priority: {type: String, default: '3'},
 		hero: {type: Number, ref: 'Person'},
 		champion: {type: Number, ref: 'Person'},
 		contacts: [ {type: Number, ref: 'Person'} ],
