@@ -5,12 +5,34 @@ exports.setRoute = function (db) {
 
 	return {
 		list: list,
+		getStory: getStory,
 		addStory: addStory,
 		updateStory: updateStory,
 		removeStory: removeStory,
 		purgeStories: purgeStories
 	}
 }
+
+getStory = function (req, res) {
+	Stories.find({_id: req.params.storyId})
+		.populate('hero champion contacts unit')
+		.exec(function (err, docs) {
+			var options = [
+				{path: 'hero.unit', model: 'Unit'},
+				{path: 'champion.unit', model: 'Unit'},
+				{path: 'contacts.unit', model: 'Unit'}
+			];
+
+			if (err) {
+				console.log(err);
+				res.send(err);
+			}
+
+			Stories.populate(docs, options, function (err, story) {
+				res.send(story);
+			});
+		});
+};
 
 list = function (req, res) {
 	Stories.find({})
