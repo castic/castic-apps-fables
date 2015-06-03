@@ -28,7 +28,7 @@ app.config(['$routeProvider', '$httpProvider', function ($routeProvider, $httpPr
             controller: 'StoriesCtrl'
         }).
         when('/stories/view/:storyId', {
-            templateUrl: 'partials/story.html',
+            templateUrl: 'components/stories/story.html',
             controller: 'StoryCtrl'
         }).        
         when('/stories/new', {
@@ -168,7 +168,7 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 		DataService.People.list()
 			.success(function (people) {
 				$scope.people = people;
-				console.log('People from db: ',people);
+				// console.log('People from db: ',people);
 				getStories();
 			});	
 		};
@@ -176,7 +176,7 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 	getStories = function () {
 		DataService.Stories.list()
 			.success(function (stories) {
-				// console.log(stories);
+				console.log(stories);
 				$scope.stories = stories;
 			});
 	};
@@ -336,7 +336,7 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 		var totalTime = 0;
 
 		angular.forEach(timeLine, function (chapter) {
-			if ( (chapter.entryType != 'Questline') && (chapter.details) ){
+			if ( (chapter.entryType != 'Questline') && (chapter.details.estimatedTime) ){
 				totalTime += chapter.details.estimatedTime;
 			}
 		});
@@ -472,7 +472,11 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 
 	$scope.showChapterButtons = function (chapter) {
 
-		if (chapter.showContent || (chapter.entryType == 'Questline') )return;
+		if (chapter.entryType == 'Questline') return;
+
+		if (chapter.showContent) {
+			chapter.showContent = false;
+		}
 
 		if (currentChapter) {
 			currentChapter.showButtons = false;
@@ -486,7 +490,7 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 		
 		if (chapter.showContent || (chapter.entryType == 'Questline') )return;
 
-		console.log('The current status before right-swipe: ', chapter.status);
+		// console.log('The current status before right-swipe: ', chapter.status);
 
 		if (currentChapter) {
 			currentChapter.showButtons = false;
@@ -496,7 +500,7 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 				chapter.showStrikeThrough = !chapter.showStrikeThrough;
 				chapter.status = (chapter.showStrikeThrough) ? 'removed' : 'incomplete';
 
-				console.log('The current status after right-swipe: ', chapter.status);
+				// console.log('The current status after right-swipe: ', chapter.status);
 
 				$scope.getCurrentChapter(story);
 				updateStory(story);
@@ -506,7 +510,7 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 
 	$scope.selectChapter = function (chapter, story) {
 		
-		if (chapter.entryType == 'Questline') return;
+		if ( (chapter.entryType == 'Questline') || currentChapter )  return;
 
 		if (chapter.entryType == 'Quest') {
 			completeChapter(chapter, story);
@@ -530,7 +534,7 @@ app.controller('AdminCtrl', ['$scope', 'DataService', 'AuthService', '$location'
 		story.newChapter = {};
 		$scope.showNewChapter = false;
 		// console.log('canceling entry: ',$scope.showNewChapter);
-	}
+	};
 
 	$scope.addChapter = function (story) {
 		story.newChapter.insertionPoint = (story.lastChapter.index > 0) ? story.lastChapter.index : 0;
@@ -568,17 +572,17 @@ app.service('DataService', ['$http', 'AppConfig', '$location', function ($http, 
 		getStories: function () {
 			return stories;
 		},
-		getStory: function (id) {
-			var found = null;
+		// getStory: function (id) {
+		// 	var found = null;
 
-			angular.forEach(stories, function (story) {
-				if (story.storyId == id) {
-					found = story;
-				}
-			});
+		// 	angular.forEach(stories, function (story) {
+		// 		if (story.storyId == id) {
+		// 			found = story;
+		// 		}
+		// 	});
 
-			return found
-		},
+		// 	return found
+		// },
 		getTechs: function () {
 			return techs;
 		},
@@ -608,6 +612,9 @@ app.service('DataService', ['$http', 'AppConfig', '$location', function ($http, 
 			// }
 		},
 		Stories: {
+			get: function (storyId) {
+				return $http.get(AppConfig.apiPath+'/stories/'+storyId);
+			},
 			list: function () {
 				return $http.get(AppConfig.apiPath+'/stories');
 			},
@@ -669,22 +676,6 @@ app.service('DataService', ['$http', 'AppConfig', '$location', function ($http, 
 			}
 		}
 	}
-}]);
-
-
-
-app.controller('StoryCtrl', ['$scope', '$routeParams', 'DataService', function($scope, $routeParams, DataService){
-	$scope.story = DataService.getStory($routeParams.storyId);
-	
-	DataService.Quests.list()
-		.success(function (quests) {
-			console.log(quests);
-		})
-		.error(function (err, status) {
-
-		});
-
-	console.log($scope.story);
 }]);
 
 
