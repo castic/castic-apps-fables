@@ -7,36 +7,34 @@ app.controller('StoriesCtrl', ['$scope', 'DataService', function ($scope, DataSe
 	$scope.units = [];
 	$scope.people = [];
 
-	var currentChapter;
 	$scope.roles = ['hero','champion','contact','vendor'];
 
+	// getQuests = function () {
+	// 	DataService.Quests.list()
+	// 		.success(function (quests) {
+	// 			// $scope.tags = uniq(getTags(quests));
+	// 			// console.log(quests);
+	// 			$scope.quests = quests;
+	// 			getUnits();
+	// 		});
+	// 	};
 
-	getQuests = function () {
-		DataService.Quests.list()
-			.success(function (quests) {
-				// $scope.tags = uniq(getTags(quests));
-				// console.log(quests);
-				$scope.quests = quests;
-				getUnits();
-			});
-		};
-
-	getUnits = function () {
-		DataService.Units.list()
-			.success(function (units) {
-				$scope.units = units;
-				getPeople();
-			});	
-		};
+	// getUnits = function () {
+	// 	DataService.Units.list()
+	// 		.success(function (units) {
+	// 			$scope.units = units;
+	// 			getPeople();
+	// 		});	
+	// 	};
 	
-	getPeople = function () {
-		DataService.People.list()
-			.success(function (people) {
-				$scope.people = people;
-				console.log('People from db: ',people);
-				getStories();
-			});	
-		};
+	// getPeople = function () {
+	// 	DataService.People.list()
+	// 		.success(function (people) {
+	// 			$scope.people = people;
+	// 			console.log('People from db: ',people);
+	// 			getStories();
+	// 		});	
+	// 	};
 
 	getStories = function () {
 		DataService.Stories.list()
@@ -46,7 +44,24 @@ app.controller('StoriesCtrl', ['$scope', 'DataService', function ($scope, DataSe
 			});
 	};
 
-		updateStory = function (updatedStory) {
+	getStories();
+
+	// getQuests();
+}]);
+
+app.controller('StoryCtrl', ['$scope', '$routeParams', 'DataService', function($scope, $routeParams, DataService){
+	
+	var currentChapter;
+	$scope.story = {};
+
+	DataService.Stories.get($routeParams.storyId)
+		.success(function (stories) {
+			$scope.story = stories[0];
+			getCurrentChapter($scope.story)
+			// console.log($scope.story);
+		});
+	
+	updateStory = function (updatedStory) {
 		DataService.Stories.update(updatedStory)
 			.success(function (story) {
 				console.log('saved to db ', story);	
@@ -94,7 +109,7 @@ app.controller('StoriesCtrl', ['$scope', 'DataService', function ($scope, DataSe
 	};
 
 	showChapterContent = function (chapter) {
-		chapter.showContent = !chapter.showContent
+		if (chapter.content) chapter.showContent = !chapter.showContent
 	};
 
 	completeChapter = function (chapter, story) {
@@ -124,7 +139,7 @@ app.controller('StoriesCtrl', ['$scope', 'DataService', function ($scope, DataSe
 
 		console.log('The current status is: ', chapter.status)
 
-		$scope.getCurrentChapter(story);
+		getCurrentChapter(story);
 		updateStory(story);
 	};
 
@@ -140,11 +155,10 @@ app.controller('StoriesCtrl', ['$scope', 'DataService', function ($scope, DataSe
 			});
 	};
 
+	getCurrentChapter = function (story) {
+		// var currentChapter;
 
-	$scope.getCurrentChapter = function (story) {
-		var currentChapter;
-
-		story.timeLine.every(function (chapter, index) {
+		var storyComplete = story.timeLine.every(function (chapter, index) {
 			if ( (chapter.entryType != 'Questline') && chapter.status != 'completed' ) { 
 				story.lastChapter = {
 					title: chapter.title,
@@ -155,6 +169,8 @@ app.controller('StoriesCtrl', ['$scope', 'DataService', function ($scope, DataSe
 				return true;
 			}
 		});
+
+		if (storyComplete) story.lastChapter = {};
 	};
 
 	$scope.removeStory = function (story) {
@@ -189,7 +205,7 @@ app.controller('StoriesCtrl', ['$scope', 'DataService', function ($scope, DataSe
 		updateStory(story);
 	};
 
-		$scope.showChapterButtons = function (chapter) {
+	$scope.showChapterButtons = function (chapter) {
 
 		if (chapter.showContent || (chapter.entryType == 'Questline') )return;
 
@@ -217,7 +233,7 @@ app.controller('StoriesCtrl', ['$scope', 'DataService', function ($scope, DataSe
 
 				console.log('The current status after right-swipe: ', chapter.status);
 
-				$scope.getCurrentChapter(story);
+				getCurrentChapter(story);
 				updateStory(story);
 			}
 		}
@@ -225,6 +241,8 @@ app.controller('StoriesCtrl', ['$scope', 'DataService', function ($scope, DataSe
 
 	$scope.selectChapter = function (chapter, story) {
 		
+		console.log('chapter clicked: ',chapter.title);
+
 		if (chapter.entryType == 'Questline') return;
 
 		if (chapter.entryType == 'Quest') {
@@ -273,5 +291,5 @@ app.controller('StoriesCtrl', ['$scope', 'DataService', function ($scope, DataSe
 		// updateStory(story);
 	};
 
-	getQuests();
+
 }]);
