@@ -2,7 +2,8 @@
 <html ng-app="fablesApp">
 <head>
 	<title>Fables - Dev</title>
-	<meta name="viewport" content="width=device-width" />
+	<!-- <meta name="viewport" content="width=device-width" /> -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=yes">
 	<link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">        
 	<link rel="stylesheet" type="text/css" href="css/animate.min.css">
@@ -10,12 +11,7 @@
 	<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.css">
 	<link rel="stylesheet" type="text/css" href="css/styles.css">
 </head>
-<body 
-	ng-controller="AppCtrl" 
-	class="light" 
-	ng-class="{'light': currentTheme == 'light'}"
-	ng-init="currentTheme = ''">
-
+<body ng-controller="AppCtrl" class="light">
 	<nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
         <div class="navbar-header">
@@ -25,7 +21,10 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand text-fantasy" href="#/">Fables</a>
+          <a class="navbar-brand text-fantasy" href="#/">
+          	<img src="/images/dragon.png">
+          	Fables
+          </a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           	<form class="navbar-form navbar-right">
@@ -42,11 +41,11 @@
       </div>
     </nav>
     <div class="container-fluid" >
-    	<div class="scroll-top" ng-show="yPos > 0">
+    	<!-- <div class="scroll-top" ng-show="yPos > 0">
     		<button type="button" class="btn btn-link" ng-click="scrollHome()">
     			&nbsp;
     		</button>   		
-    	</div>
+    	</div> -->
     	<div class="row">
     		<div class="col-md-2 col-sm-3 sidebar">
     			<div 
