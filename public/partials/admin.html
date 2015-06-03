@@ -8,7 +8,7 @@
 		</div>
 		<div class="btn-group" role="group">
 			<button type="button" class="btn btn-success" ng-click="showStories=!showStories">
-				<span class="fa fa-leanpub"></span>&nbsp;&nbsp;
+				<span class="fa fa-book"></span>&nbsp;&nbsp;
 				Stories
 			</button>
 		</div>
@@ -32,6 +32,12 @@
 				Import
 			</button>
 		</div>
+		<div class="btn-group" role="group">
+			<button type="button" class="btn btn-success" ng-click="showSearch=!showSearch">
+				<span class="fa fa-search"></span>&nbsp;&nbsp;
+				Search
+			</button>
+		</div>
 	</div>
 <!-- <button 
 		type="button" 
@@ -50,7 +56,6 @@
 		Logout
 	</button> -->
 	<div class="col-md-12">
-		
 		<!-- <div ng-show="showLogin"
 			class="animated" 
 			ng-class="{fadeOutLeft: !showLogin, fadeInUp: showLogin}">
@@ -85,6 +90,26 @@
             	<a href="uploads/{{uploadedFile.uuid}}/file/{{uploadedFile.fileName}}">{{uploadedFile.fileName}}</a>
             </p>
 		</div> -->
+		<div ng-show="showSearch" 
+			class="animated" 
+			ng-class="{fadeOutUp: !showSearch, fadeInDown: showSearch}" 
+			ng-init="showSearch=false">
+			<div class="row">
+				<div class="col-md-4">
+					<br><br>
+					<form class="form">
+						<div class="form-group">
+							<div class="input-group">
+								<input type="text" class="form-control" ng-model="searchTerm" placeholder="">
+								<div class="input-group-addon">
+									<span class="fa fa-search"></span>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
 		<div ng-show="showQuests" 
 			class="animated" 
 			ng-class="{fadeOutLeft: !showQuests, fadeInUp: showQuests}" 
@@ -191,13 +216,6 @@
 					</button>
 				</h2>
 				<form class="col-sm-4" ng-show="showNewStory">
-					<!-- <div class="form-group">
-						<input 
-							type="text" 
-							class="form-control input-sm" 
-							ng-model="newStory.title" 
-							placeholder="Title">
-					</div> -->
 					<div class="form-group">
 						<ui-select 
 							multiple 
@@ -266,7 +284,7 @@
 			<div class="row">
 				<div class="ticket-list col-md-12">
 					<accordion close-others="true">
-						<accordion-group ng-repeat="story in stories" is-open="story.expanded" ng-init="getCurrentChapter(story)">
+						<accordion-group ng-repeat="story in stories | filter: searchTerm" is-open="story.expanded" ng-init="getCurrentChapter(story)">
 							<accordion-heading>
 								<div class="row">
 									<div class="ticket-priority">
@@ -304,9 +322,15 @@
 											</span>
 										</p>
 										<p class="hidden-xs">needs</p>
-										<p class="story-title ng-binding fa fa-leanpub">
-											{{story.title}}
-										</p>
+										<p class="story-title">
+											<span class="fa fa-book">
+												{{story.title}}
+											</span>
+											&nbsp;&nbsp;
+											<span class="fa fa-clock-o text-warning">
+												{{getTotalEstimatedTime(story.timeLine)}} min
+											</span>
+										</p>	
 										<p class="story-chapter">
 											<span class="fa fa-exclamation-circle">&nbsp;{{story.lastChapter.title}}</span>
 											<span class="pull-right hidden story-expanded" ng-class="{'story-collapsed': story.expanded}">›</span>
@@ -335,28 +359,8 @@
 											</span>
 										</p>
 									</div>
-									<!-- <p class="story-lead">
-										<span class="lead">
-											<span class="fa" ng-class="{'fa-check': story.completed == true}"></span>
-											
-										</span> 
-										
-										
-										
-										<span class="fa fa-clock-o text-warning">
-											{{getTotalEstimatedTime(story.timeLine)}}m
-										</span> 
-										
-									</p> -->
-									<!-- <p>
-										<span 
-											class="pull-right story-expand fa" 
-											ng-class="{'fa-angle-down': !story.expanded, 'fa-angle-up': story.expanded}">
-										</span>
-									</p> -->
 								</div>
 							</accordion-heading>
-
 							<h4 class="chapter-menu">
 								<!-- Chapters&nbsp; -->
 								<span class="btn fa fa-phone add-chapter" ng-click="addEntry('call', story)">
@@ -413,11 +417,6 @@
 												class="fa fa-times-circle chapter-status text-muted" 
 												ng-if="chapter.status == 'removed' && chapter.entryType == 'Quest'">
 											</span>
-											<!-- <span class="chapter-text">
-												<span class="chapter-title">
-													{{chapter.title}}
-												</span>
-											</span> -->
 											<span class="chapter-text" ng-class="{'text-muted': chapter.status == 'removed'}">
 												<span class="chapter-title" ng-if="chapter.status != 'removed'">{{chapter.title}}</span>
 												<s ng-if="chapter.status == 'removed'" >{{chapter.title}}</s>
@@ -427,49 +426,14 @@
 												</span>
 											</span>
 										</div>
-										<!-- {{chapter.showContent}} -->
-										<!-- <div 
-											class="chapter-content"
-											ng-class="{'shown': chapter.showContent == 'false'}">
-											<blockquote>
-												{{chapter.content}}
-											</blockquote>	
-										</div> -->
 										
-<!-- 										<div 
-											ng-hide="chapter.entryType == 'Quest'"
-											class="btn"> 
-											<span 
-												class="fa text-warning chapter-status"
-												ng-class="{'fa-envelope-o': chapter.entryType == 'email', 'fa-phone': chapter.entryType == 'call', 'fa-comment': chapter.entryType == 'face2face', 'hidden': chapter.entryType == 'Questline'}">
-											</span>
-											<span class="chapter-text">
-												<span class="chapter-title">
-													{{chapter.title}}
-												</span>
-											</span>
-										</div>
-										<div 
-											ng-show="chapter.entryType == 'Quest'"
-											class="btn">
-											<span 
-												class="fa chapter-status" 
-												ng-if="chapter.status != 'removed'"
-												ng-class="{'fa-check-circle': chapter.completedBy != undefined, 'fa-circle-thin': chapter.completedBy == undefined, 'text-success': chapter.completedBy != undefined }">
-											</span>
-											<span class="fa fa-times-circle chapter-status text-muted" ng-if="chapter.status == 'removed'"></span>
-											<span class="chapter-text" ng-class="{'text-muted': chapter.status == 'removed'}">
-												<span class="chapter-title" ng-if="chapter.status != 'removed'">{{chapter.title}}</span>
-												<s ng-if="chapter.status == 'removed'" >{{chapter.title}}</s>
-												<br>
-												<span class="fa fa-clock-o text-warning">&nbsp;{{chapter.details.estimatedTime}} min&nbsp;</span>
-											</span>
-										</div>
-										<blockquote 
-											class="chapter-content" 
-											ng-show="chapter.showContent">
+									</div>
+									<div 
+										class="chapter-content"
+										ng-if="chapter.showContent">
+										<blockquote>
 											{{chapter.content}}
-										</blockquote> -->
+										</blockquote>	
 									</div>
 									<div ng-if="chapter.entryType != 'Questline'"
 										class="pull-right btn-group chapter-buttons" 
