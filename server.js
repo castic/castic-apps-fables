@@ -78,6 +78,7 @@ api_server.delete('/api/people/remove/:personId', fables.people.removePerson);
 
 // Stories
 api_server.get('/api/stories', fables.stories.list);
+api_server.get('/api/stories/:storyId', fables.stories.getStory);
 api_server.post('/api/stories/new', fables.stories.addStory);
 api_server.put('/api/stories/update', fables.stories.updateStory);
 api_server.delete('/api/stories/remove/:storyId', fables.stories.removeStory);
