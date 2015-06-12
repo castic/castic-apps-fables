@@ -1,0 +1,74 @@
+<div class="book">
+	<div ng-repeat="story in stories" class="story">
+		
+		<a href="#/stories/view/{{story._id}}" class="">
+			<!-- <div class="col-sm-1 text-center hidden-xs story-left-col">
+				<p>
+					<span class="text-success">#{{story._id}}</span> 
+				</p>
+				<p class="fa fa-shield fa-3x"></p>
+				<p>
+					<span class="ticket-tech">{{story.hero.name}}</span>
+				</p>
+			</div> -->
+			<div class="contact-image">
+				<span class="image-placeholder pull-left">SM</span>
+				<p class="pull-left contact-info">
+					<strong class="text-warning contact-name">{{story.contacts[0].name}}</strong>
+					<br>
+					<span class="text-muted">from {{story.contacts[0].unit.realm}}</span>
+					&nbsp;
+					<span 
+						class="fa fa-phone text-muted" 
+						ng-if="story.contacts[0].phone">{{story.contacts[0].phone}}	
+					</span>
+					&nbsp;
+					<span 
+						class="fa fa-map-marker text-muted" 
+						ng-if="story.contacts[0].location">{{story.contacts[0].location}}
+					</span>
+				</p>
+				<div class="clearfix"></div>
+				<div class="priority" ng-class="{'bg-warning': story.priority == '1'}"></div>
+
+			</div>
+			<div class="story-info">
+				<!-- <p class="hidden-xs">needs</p> -->
+				<p class="">
+					<span class="fa fa-book">{{story.title}}</span>
+				</p>
+				<p class="">
+					<span class="fa fa-exclamation-circle" ng-if="lastChapter(story).title">{{ lastChapter(story).title }}</span>
+					<span class="fa fa-check-circle text-success" ng-if="!lastChapter(story).title">COMPLETE</span>
+					<!-- <span class="">Stories Status</span> -->
+				</p>
+			</div>
+			<!-- <div class="clearfix"></div> -->
+			<!-- <div class="col-sm-1 hidden-xs story-right-col">
+				<p>
+					<span 
+						class="fa fa-phone" 
+						ng-if="story.contacts[0].phone">
+						&nbsp;{{story.contacts[0].phone}}&nbsp;	
+					</span>
+				</p>
+				<p>
+					<span 
+						class="fa fa-envelope-o" 
+						ng-if="story.contacts[0].email">
+						&nbsp;{{story.contacts[0].email.replace('fiu.edu', 'FIU')}}&nbsp;
+					</span>
+				</p>
+				<p>
+					<span 
+						class="fa fa-map-marker" 
+						ng-if="story.contacts[0].location">
+						&nbsp;{{story.contacts[0].location}}&nbsp;
+					</span>
+				</p>
+			</div> -->
+		</a>
+	</div>
+			
+
+</div>
