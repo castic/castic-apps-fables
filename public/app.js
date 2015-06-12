@@ -27,6 +27,10 @@ app.config(['$routeProvider', '$httpProvider', function ($routeProvider, $httpPr
             templateUrl: 'components/stories/stories.html',
             controller: 'StoriesCtrl'
         }).
+        when('/stories/view-mod/:storyId', {
+            templateUrl: 'components/stories/story-mod.html',
+            controller: 'StoryCtrl'
+        }).
         when('/stories/view/:storyId', {
             templateUrl: 'components/stories/story.html',
             controller: 'StoryCtrl'
@@ -90,10 +94,16 @@ app.run(['$rootScope', '$location', 'DataService', 'AuthService', function ($roo
  //    });
 }]);
 
-app.controller('AppCtrl', ['$scope', '$interval', 'AuthService', '$location', function ($scope, $interval, AuthService, $location){
+app.controller('AppCtrl', ['$scope', '$interval', 'AuthService', '$location', 'DataService', function ($scope, $interval, AuthService, $location, DataService){
 	$scope.tickets = {
 		assignedCount: 10,
 		unassignedCount: 2
+	};
+
+	DataService.setCurrentLocation('Fables');
+
+	$scope.currentLocation = function () {
+		return DataService.getCurrentLocation();
 	};
 
 	$scope.scrollHome = function () {
@@ -568,7 +578,15 @@ app.service('DataService', ['$http', 'AppConfig', '$location', function ($http, 
 
 	var loggedIn = false;
 
+	var currentLocation = "Fables";
+
 	return {
+		setCurrentLocation: function (location) {
+			currentLocation = location;
+		},
+		getCurrentLocation: function () {
+			return currentLocation;
+		},
 		getStories: function () {
 			return stories;
 		},
@@ -675,6 +693,17 @@ app.service('DataService', ['$http', 'AppConfig', '$location', function ($http, 
 				return loggedIn;
 			}
 		}
+	}
+}]);
+
+app.service('common', ['$interval', function ($interval) {
+	return {
+		interval: function (cb, intervalPeriod) {
+	    	return $interval(cb, intervalPeriod);
+	    },
+	    cancelInterval: function (promise) {
+	    	return $interval.cancel(promise);
+	    }
 	}
 }]);
 

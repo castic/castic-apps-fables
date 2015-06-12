@@ -14,6 +14,8 @@ exports.setRoute = function (db) {
 }
 
 getStory = function (req, res) {
+	console.log('Single story: ',req.headers);
+
 	Stories.find({_id: req.params.storyId})
 		.populate('hero champion contacts unit')
 		.exec(function (err, docs) {
@@ -35,6 +37,8 @@ getStory = function (req, res) {
 };
 
 list = function (req, res) {
+	console.log('All Stories: ',req.headers);
+
 	Stories.find({})
 		.populate('hero champion contacts unit')
 		.exec(function (err, docs) {
@@ -108,6 +112,9 @@ updateStory = function (req, res) {
 			{ 
 				$set: updatedStory
 			}, function	(err, rows, dbResponse) {
+				console.log('Error: ', err);
+				console.log('DB: ', dbResponse);
+				console.log('Rows: ', rows);
 				res.send(rows);				
 			}
 		);
