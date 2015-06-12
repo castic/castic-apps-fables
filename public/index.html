@@ -10,23 +10,25 @@
 	<link rel="stylesheet" type="text/css" href="css/select.min.css">
 	<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/select2/3.4.5/select2.css">
 	<link rel="stylesheet" type="text/css" href="css/styles.css">
+	<link href='http://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
 </head>
 <body ng-controller="AppCtrl" class="light">
 	<nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed hidden" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand text-fantasy" href="#/">
-          	<img src="/images/dragon.png">
-          	Fables
-          </a>
+			<button type="button" class="navbar-toggle collapsed hidden" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a href="#/" class="navbar-brand text-fantasy" >
+				<img src="/images/dragon.png">
+			</a>
+			<p class="current-location">{{currentLocation()}}</p>
+			<span class="pull-right fa fa-search btn fables-search"></span>
         </div>
-        <div id="navbar" class="navbar-collapse collapse">
+        <!-- <div id="navbar" class="navbar-collapse collapse">
           	<form class="navbar-form navbar-right">
             	<input type="text" class="form-control" placeholder="Search...">
           	</form>
@@ -37,7 +39,7 @@
 				<li><a href="#/admin">Admin</a></li>
 				<li><a href="#">Help</a></li>
 	        </ul>
-        </div>
+        </div> -->
       </div>
     </nav>
     <div class="container-fluid" >

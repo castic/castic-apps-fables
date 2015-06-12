@@ -134,14 +134,14 @@ input, textarea {
 }
 
 .scroll-top .btn {
-  width: 32px;
-  height: 32px;
-  background: url('/images/1-up.png');
-  background-size: contain;
+	width: 32px;
+	height: 32px;
+	background: url('/images/1-up.png');
+	background-size: contain;
 }
 
 .main {
-	margin-top: 60px;
+	margin-top: 52px;
 }
 
 .expand {
@@ -166,10 +166,10 @@ input, textarea {
 }
 
 .panel-group .panel {
-  margin-bottom: -4px;
-  -webkit-box-shadow: initial;
-  box-shadow: initial;
-  border: 0px;
+	margin-bottom: -4px;
+	-webkit-box-shadow: initial;
+	box-shadow: initial;
+	border: 0px;
 }
 
 .page-title {
@@ -446,6 +446,7 @@ button.dropdown-toggle {
 }
 
 .story-center-col {
+	padding-top: 5px;
 	padding-bottom: 5px;
 	height: 105px;
 }
@@ -457,7 +458,7 @@ button.dropdown-toggle {
 }
 
 .story-contact {
-	font-size: 25px;
+	font-size: 20px;
 }
 
 .story-contact-info {
@@ -512,6 +513,10 @@ button.dropdown-toggle {
 	padding: 0px;
 }
 
+.landing-buttons li a {
+	display: block;
+}
+
 .story-header {
 	background-color: #146578;
 	position: fixed;
@@ -544,6 +549,46 @@ button.dropdown-toggle {
 	border-radius: 0px;
 }
 
+.navbar-header .current-location {
+	position: absolute;
+	width: 100%;
+	text-align: center;
+	font-size: 20px;
+	font-family: 'Pacifico', cursive;
+	margin-top: 10px;
+	margin-bottom: 5px;
+}
+
+.navbar-header .fables-search {
+	font-size: 25px;
+	margin-top: 7px;
+	margin-right: 10px;
+}
+
+/*
+ * Stories View
+ *
+*/
+
+.story-header.single-story {
+	position: relative;
+	width: inherit;
+	border-bottom: 1px solid #999
+}
+
+.stories-fixed {
+	position: inherit;
+	margin-right: -15px;
+}
+
+.single-story .story-center-col {
+	height: initial;
+	padding-bottom: 0px;
+	height: 75px;
+	height: 105px;
+
+}
+
 /* 
  * Light Style 
  */
@@ -559,7 +604,13 @@ body.light,
 }
 
 .light .navbar-inverse {
-	background-color: #114D5B;
+	background-color: #0674A5;
+	color: #e35e4e;
+	min-height: 0px;
+}
+
+.light .current-location {
+	  color: #e35e4e;
 }
 
 .light .panel,
@@ -589,12 +640,15 @@ body.light,
 
 .light .navbar-inverse .navbar-brand {
 	color: #e35e4e;
+	height: initial;
+	z-index: 100;
+	font-size: 40px;
 }
 
 .light .navbar-brand {
 	font-size: 35px;
 	font-weight: bolder;
-	padding: 9.5px 15px;
+	padding: 4px 15px;
 }
 
 .light .btn-success {
@@ -630,4 +684,82 @@ body.light,
 	display: inline-block;
 	width: 30px;
 	margin-top: -10px;
+}
+
+.single-story a {
+	color: #fff;
+	padding: 5px 15px;
+  	display: block;
+}
+
+/* 
+ * Stories Mod
+ */
+
+.book .story {
+	background-color: #fff;
+	/* border: 1px solid #C7C7C7; */ 
+	margin-left: -10px;
+	margin-right: -10px;
+	padding: 10px 15px;
+	margin-bottom: 15px;
+	margin-bottom: 5px;
+	margin-top: 7px;
+	-webkit-box-shadow: 0px 2px 1px 1px #c7c7c7;
+	box-shadow: 0px 2px 2px 0px #c7c7c7;
+}
+
+.book .story p {
+	margin-bottom: 0px;
+}
+
+.book .story a {
+	color: #6A6A6A;
+}
+
+.book .story .contact-name {
+	font-size: 18px;
+	color: #FFFFFF;
+}
+
+.book .story .fa:before {
+	margin-right: 5px;
+}
+
+.book .story .priority {
+	/* width: 2px; */
+	height: 2px;
+	/* left: 5px; */
+	/* margin-top: -10px; */
+	/* margin-bottom: 5px; */
+	/* position: absolute; */
+	background-color: #e35e4e;
+}
+
+.book .story .image-placeholder {
+	margin-right: 10px;
+	margin-left: 10px;
+	background-color: #0674A5;
+	padding: 13px;
+	margin-top: 8px;
+	margin-bottom: -10px;
+	display: inline-block;
+	border-radius: 50%;
+	color: #fff;
+	font-size: 22px;
+}
+
+.book .story .story-info {
+  margin-left: 18px;
+  margin-top: 10px;
+}
+
+.book .story .contact-info {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.book .story .contact-image {
+	background-color: #484848;
+	margin: -10px -15px 0px -15px;
 }
