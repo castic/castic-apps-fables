@@ -1,6 +1,6 @@
 var app = angular.module('fablesApp');
 
-app.controller('StoriesCtrl', ['$scope', 'DataService', function ($scope, DataService){
+app.controller('StoriesCtrl', ['$scope', 'DataService', 'StoryService', function ($scope, DataService, StoryService){
 
 	$scope.quests = [];
 	$scope.stories = [];
@@ -9,6 +9,7 @@ app.controller('StoriesCtrl', ['$scope', 'DataService', function ($scope, DataSe
 
 	$scope.roles = ['hero','champion','contact','vendor'];
 
+	DataService.setCurrentLocation('Stories');
 	// getQuests = function () {
 	// 	DataService.Quests.list()
 	// 		.success(function (quests) {
@@ -36,10 +37,14 @@ app.controller('StoriesCtrl', ['$scope', 'DataService', function ($scope, DataSe
 	// 		});	
 	// 	};
 
+	$scope.lastChapter = function (story) {
+		return StoryService.getCurrentChapter(story);
+	};
+
 	getStories = function () {
 		DataService.Stories.list()
 			.success(function (stories) {
-				// console.log(stories);
+				console.log(stories);
 				$scope.stories = stories;
 			});
 	};
@@ -49,17 +54,32 @@ app.controller('StoriesCtrl', ['$scope', 'DataService', function ($scope, DataSe
 	// getQuests();
 }]);
 
-app.controller('StoryCtrl', ['$scope', '$routeParams', 'DataService', function($scope, $routeParams, DataService){
+app.controller('StoryCtrl', ['$scope', '$routeParams', 'DataService', 'common', function($scope, $routeParams, DataService, common){
 	
 	var currentChapter;
 	$scope.story = {};
 
-	DataService.Stories.get($routeParams.storyId)
+	DataService.setCurrentLocation('Story');
+
+	getStory = function () {
+		DataService.Stories.get($routeParams.storyId)
 		.success(function (stories) {
 			$scope.story = stories[0];
 			getCurrentChapter($scope.story)
 			// console.log($scope.story);
-		});
+		});	
+	};
+
+	getStory();
+	// var refreshStory = common.interval(function () {
+	// 		getStory();
+	// 	}, 2000);			
+			
+	// $scope.$on('$destroy', function() {
+ //        if (refreshStory) {
+ //            common.cancelInterval(refreshStory);
+ //        }
+ //    });
 	
 	updateStory = function (updatedStory) {
 		DataService.Stories.update(updatedStory)
@@ -290,6 +310,5 @@ app.controller('StoryCtrl', ['$scope', '$routeParams', 'DataService', function($
 		console.log(story.timeLine);
 		// updateStory(story);
 	};
-
 
 }]);
