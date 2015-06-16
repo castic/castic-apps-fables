@@ -15,7 +15,7 @@ exports.initRoutes = function (db) {
 		units: registerModel(db, 'Unit'),
 		people: registerModel(db, 'Person'),
 		stories: registerModel(db, 'Story'),
-		ad: require('./routes/route.ad.js'),
+		// ad: require('./routes/route.ad.js'),
 		importFile: require('./routes/route.import.js').setRoute(db)
 	}
 };

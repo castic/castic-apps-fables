@@ -85,7 +85,7 @@ api_server.delete('/api/stories/remove/:storyId', fables.stories.removeStory);
 
 // AD routes
 // api_server.get('/api/ad-users', fables.ad.listUsers);
-api_server.get('/api/ad-users/:username', fables.ad.getUser);
+// api_server.get('/api/ad-users/:username', fables.ad.getUser);
 // api_server.get('/api/login', fables.ad.login);
 // api_server.post('/api/login', fables.ad.login);
 // api_server.get('/api/logout', fables.ad.logout);
