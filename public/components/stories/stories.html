@@ -13,8 +13,19 @@
 			</div> -->
 			<div class="contact-image">
 				<span class="image-placeholder pull-left">SM</span>
+				<span class="priority text-danger fa-stack" ng-class="{'hidden': story.priority != '1'}">
+					<i class="fa fa-circle fa-stack-2x fa-inverse"></i>
+					<i class="glyphicon glyphicon-fire fa-stack-1x " ></i>
+				</span>
+				
 				<p class="pull-left contact-info">
+					<!-- <span class="fables-vip text-danger fa-stack" ng-class="{'hidden': story.priority != '1'}">
+						<i class="fa fa-circle fa-stack-2x fa-inverse"></i>
+						
+					</span> -->
+					<i class="glyphicon glyphicon-tower text-danger" ng-class="{'hidden': story.priority != '1'}"></i>
 					<strong class="text-warning contact-name">{{story.contacts[0].name}}</strong>
+					
 					<br>
 					<span class="text-muted">from {{story.contacts[0].unit.realm}}</span>
 					&nbsp;
@@ -27,21 +38,17 @@
 						class="fa fa-map-marker text-muted" 
 						ng-if="story.contacts[0].location">{{story.contacts[0].location}}
 					</span>
+					<br>
+					<span class="fa fa-book"></span>
+					<strong>{{story.title}}</strong>
+					<br>
+					<span class="fa fa-exclamation-circle text-success" ng-if="lastChapter(story).title"></span>
+					<span ng-if="lastChapter(story).title">{{ lastChapter(story).title }}</span>
+					<span class="fa fa-check-circle" ng-if="!lastChapter(story).title"></span>
+					<span ng-if="!lastChapter(story).title">COMPLETE</span>
 				</p>
 				<div class="clearfix"></div>
-				<div class="priority" ng-class="{'bg-warning': story.priority == '1'}"></div>
-
-			</div>
-			<div class="story-info">
-				<!-- <p class="hidden-xs">needs</p> -->
-				<p class="">
-					<span class="fa fa-book">{{story.title}}</span>
-				</p>
-				<p class="">
-					<span class="fa fa-exclamation-circle" ng-if="lastChapter(story).title">{{ lastChapter(story).title }}</span>
-					<span class="fa fa-check-circle text-success" ng-if="!lastChapter(story).title">COMPLETE</span>
-					<!-- <span class="">Stories Status</span> -->
-				</p>
+				
 			</div>
 			<!-- <div class="clearfix"></div> -->
 			<!-- <div class="col-sm-1 hidden-xs story-right-col">

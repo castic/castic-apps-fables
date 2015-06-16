@@ -508,7 +508,7 @@ button.dropdown-toggle {
 	margin-right: 20px;
 	width: 30px;
 	text-align: center;
-	color: #e35e4e;
+	color: #0674A5;
 	font-size: 30px;
 	padding: 0px;
 }
@@ -563,6 +563,7 @@ button.dropdown-toggle {
 	font-size: 25px;
 	margin-top: 7px;
 	margin-right: 10px;
+	color: #fff;
 }
 
 /*
@@ -600,7 +601,7 @@ body.light,
 
 .light a,
 .light .btn-link {
-	color: #146578;
+	color: #EF5F54;
 }
 
 .light .navbar-inverse {
@@ -610,7 +611,7 @@ body.light,
 }
 
 .light .current-location {
-	  color: #e35e4e;
+	  color: #FFFFFF;
 }
 
 .light .panel,
@@ -698,15 +699,17 @@ body.light,
 
 .book .story {
 	background-color: #fff;
-	/* border: 1px solid #C7C7C7; */ 
+	/* border: 1px solid #AEAEAE; */ 
+	border-bottom: 1px solid #787878;
 	margin-left: -10px;
 	margin-right: -10px;
 	padding: 10px 15px;
 	margin-bottom: 15px;
 	margin-bottom: 5px;
-	margin-top: 7px;
+	margin-top: 5px;
 	-webkit-box-shadow: 0px 2px 1px 1px #c7c7c7;
-	box-shadow: 0px 2px 2px 0px #c7c7c7;
+	box-shadow: 0px 3px 4px 0px #c7c7c7;
+	font-size: small;
 }
 
 .book .story p {
@@ -718,8 +721,8 @@ body.light,
 }
 
 .book .story .contact-name {
-	font-size: 18px;
-	color: #FFFFFF;
+	font-size: 15px;
+	color: #464646;
 }
 
 .book .story .fa:before {
@@ -728,12 +731,13 @@ body.light,
 
 .book .story .priority {
 	/* width: 2px; */
-	height: 2px;
-	/* left: 5px; */
-	/* margin-top: -10px; */
-	/* margin-bottom: 5px; */
-	/* position: absolute; */
-	background-color: #e35e4e;
+	/* height: 2px; */
+	left: 15px;
+	margin-top: 55px;
+	/* margin-bottom: -2px; */
+	position: absolute;
+	/* background-color: transparent; */
+	font-size: 12px;
 }
 
 .book .story .image-placeholder {
@@ -741,25 +745,47 @@ body.light,
 	margin-left: 10px;
 	background-color: #0674A5;
 	padding: 13px;
-	margin-top: 8px;
-	margin-bottom: -10px;
+	margin-top: 15px;
+	margin-bottom: -35px;
 	display: inline-block;
 	border-radius: 50%;
 	color: #fff;
-	font-size: 22px;
+	font-size: 25px;
 }
 
 .book .story .story-info {
-  margin-left: 18px;
-  margin-top: 10px;
+  margin-left: 66px;
+  margin-top: -10px;
 }
 
 .book .story .contact-info {
 	margin-top: 5px;
 	margin-bottom: 5px;
+	width: 70%;
 }
 
 .book .story .contact-image {
-	background-color: #484848;
+	background-color: #FFFFFF;
 	margin: -10px -15px 0px -15px;
 }
+
+.book .story .glyphicon.glyphicon-fire.fa-stack-1x {
+	margin-left: -2px;
+	margin-top: -1px;
+}
+
+.book .story .fa.fa-circle.fa-stack-2x.fa-inverse {
+	color: #F0C06F;
+}
+
+.book .story .glyphicon.glyphicon-tower.fa-stack-1x {
+	font-size: 11px;
+	margin-top: -1px;
+	margin-left: -2px;
+}
+
+.book .story .fables-vip {
+	/* position: absolute; */
+	/* left: 15px; */
+	margin-top: 5px;
+}  
