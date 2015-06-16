@@ -39,24 +39,20 @@
 			</button>
 		</div>
 	</div>
-<!-- <button 
-		type="button" 
-		class="btn btn-warning" 
-		ng-hide="loggedIn()" 
-		ng-click="showLogin=!showLogin">
-		<span class="fa fa-lock"></span>&nbsp;&nbsp;
-		Login
-	</button> -->
-	<!-- <button 
-		type="button" 
-		class="btn btn-success" 
-		ng-show="loggedIn()" 
-		ng-click="logout(); showLogin=true;">
-		<span class="fa fa-check"></span>&nbsp;&nbsp;
-		Logout
-	</button> -->
+	<div class="btn-group-justified btn-group">
+		<div class="btn-group" role="group">
+			<button type="button" class="btn btn-warning" ng-hide="loggedIn()" ng-click="showLogin=!showLogin">
+				<span class="fa fa-lock"></span>&nbsp;&nbsp;
+				Login
+			</button>
+			<button type="button" class="btn btn-success" ng-show="loggedIn()" ng-click="logout(); showLogin=true;">
+				<span class="fa fa-check"></span>&nbsp;&nbsp;
+				Logout
+			</button>
+		</div>
+	</div>
 	<div class="col-md-12">
-		<!-- <div ng-show="showLogin"
+		<div ng-show="showLogin"
 			class="animated" 
 			ng-class="{fadeOutLeft: !showLogin, fadeInUp: showLogin}">
 			<h2>
@@ -73,7 +69,7 @@
 					Login
 				</button>
 			</form>
-		</div> -->
+		</div>
 		<!-- <div ng-show="showUpload"
 			class="animated"
 			ng-class="{fadeOutLeft: !showUpload, fadeInUp: showUpload}"
