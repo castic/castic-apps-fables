@@ -6,7 +6,7 @@ exports.initRoutes = function (db) {
 
 	// get Root CAs and inject the FIU AD cert
 	sslRootCAs.inject();
-	sslRootCAs.addFile( __dirname+'/routes/***REMOVED***-cert.crt' );
+	sslRootCAs.addFile( __dirname+'/routes/FIU-AD-cert.crt' );
 
 	autoIncrement.initialize(db);
 	
@@ -15,7 +15,7 @@ exports.initRoutes = function (db) {
 		units: registerModel(db, 'Unit'),
 		people: registerModel(db, 'Person'),
 		stories: registerModel(db, 'Story'),
-		ad: require('./routes/route.ad.js'),
+		// ad: require('./routes/route.ad.js'),
 		importFile: require('./routes/route.import.js').setRoute(db)
 	}
 };
