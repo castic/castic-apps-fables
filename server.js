@@ -84,14 +84,14 @@ api_server.put('/api/stories/update', fables.stories.updateStory);
 api_server.delete('/api/stories/remove/:storyId', fables.stories.removeStory);
 
 // AD routes
-// api_server.get('/ad-users', fables.ad.listUsers);
-// api_server.get('/ad-users/:username', fables.ad.getUser);
-// api_server.get('/login', fables.ad.login);
-// api_server.post('/login', fables.ad.login);
-// api_server.get('/logout', fables.ad.logout);
+// api_server.get('/api/ad-users', fables.ad.listUsers);
+api_server.get('/api/ad-users/:username', fables.ad.getUser);
+// api_server.get('/api/login', fables.ad.login);
+// api_server.post('/api/login', fables.ad.login);
+// api_server.get('/api/logout', fables.ad.logout);
 
 // USE WITH CAUTION
-// api_server.get('/quests/remove-all', fables.quests.purgeQuests);
-// api_server.get('/units/remove-all', fables.units.purgeUnits);
-// api_server.get('/people/remove-all', fables.people.purgePeople);
-// api_server.get('/stories/remove-all', fables.people.purgeStories);
+// api_server.get('/api/quests/remove-all', fables.quests.purgeQuests);
+// api_server.get('/api/units/remove-all', fables.units.purgeUnits);
+// api_server.get('/api/people/remove-all', fables.people.purgePeople);
+// api_server.get('/api/stories/remove-all', fables.people.purgeStories);
