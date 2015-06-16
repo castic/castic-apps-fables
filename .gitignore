@@ -3,3 +3,5 @@ node_modules/*
 *.log
 api/routes/route.ad.js
 public/uploads/*
+
+*.crt
