@@ -5,3 +5,5 @@ api/routes/route.ad.js
 public/uploads/*
 .git.bfg-report
 *.crt
+
+api/api_config.js
